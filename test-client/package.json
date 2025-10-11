@@ -1,0 +1,26 @@
+{
+  "name": "test-client",
+  "version": "0.0.1",
+  "description": "Sample OIDC client application for testing vite-plugin-oidc with Authorization Code + PKCE flow",
+  "scripts": {
+    "dev": "vite"
+  },
+  "keywords": [
+    "oidc",
+    "oauth2",
+    "pkce",
+    "authentication",
+    "vite",
+    "sample"
+  ],
+  "author": "kouki.miura",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "7.1.9"
+  },
+  "dependencies": {
+    "oidc-client-ts": "3.3.0",
+    "vite-plugin-oidc": "file:.."
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "name": "vite-plugin-oidc",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "A Vite plugin that provides OIDC server functionality for local development",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src/assets/templates/*.html"
+  ],
+  "scripts": {
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "node -e \"const fs=require('fs'),path=require('path'); const srcDir='src/assets'; const destDir='dist/assets'; if(fs.existsSync(srcDir)){fs.cpSync(srcDir,destDir,{recursive:true})}\"",
+    "dev": "tsc --watch",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --coverage",
+    "move-tests": "node scripts/move-tests.js"
+  },
+  "keywords": [
+    "vite-plugin",
+    "vite",
+    "plugin",
+    "oidc",
+    "oauth2",
+    "development"
+  ],
+  "author": "kouki.miura",
+  "license": "MIT",
+  "peerDependencies": {
+    "vite": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.7.1",
+    "typescript": "5.9.3",
+    "vite": "7.1.9",
+    "vitest": "3.2.4"
+  },
+  "dependencies": {
+    "jsonwebtoken": "9.0.2",
+    "@types/jsonwebtoken": "9.0.10"
+  }
+}
