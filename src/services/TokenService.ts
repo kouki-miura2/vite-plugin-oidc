@@ -3,10 +3,10 @@
  */
 
 import { JWTUtil } from '../utils/JWTUtil.js';
-import type { 
-  UserProfile, 
-  JWTConfig, 
-  TokenExpirationConfig 
+import type {
+  UserProfile,
+  JWTConfig,
+  TokenExpirationConfig
 } from '../types/index.js';
 
 export interface TokenResponse {
@@ -29,15 +29,18 @@ export class TokenService {
   private jwtUtil: JWTUtil;
   private issuer: string;
   private tokenExpiration: Required<TokenExpirationConfig>;
+  private basePath: string;
 
   constructor(
     jwtConfig: JWTConfig,
     issuer: string,
-    tokenExpiration: TokenExpirationConfig = {}
+    tokenExpiration: TokenExpirationConfig = {},
+    basePath: string
   ) {
     this.jwtUtil = new JWTUtil(jwtConfig);
     this.issuer = issuer;
-    
+    this.basePath = basePath;
+
     // Set default token expiration times
     this.tokenExpiration = {
       authorizationCode: tokenExpiration.authorizationCode || 600, // 10 minutes
@@ -120,7 +123,7 @@ export class TokenService {
    */
   validateAccessToken(token: string): { valid: boolean; payload?: any; error?: string } {
     const result = this.jwtUtil.validateToken(token);
-    
+
     if (!result.valid || !result.payload) {
       return result;
     }
@@ -149,7 +152,7 @@ export class TokenService {
    */
   validateIDToken(token: string, expectedClientId?: string): { valid: boolean; payload?: any; error?: string } {
     const result = this.jwtUtil.validateToken(token);
-    
+
     if (!result.valid || !result.payload) {
       return result;
     }
@@ -183,6 +186,7 @@ export class TokenService {
 
     const claims: Record<string, any> = {};
     const scopes = scope ? scope.split(' ') : [];
+    const isKeycloakMode = this.basePath && this.basePath.includes('/realms');
 
     // Always include sub claim
     claims.sub = userProfile.sub;
@@ -202,9 +206,28 @@ export class TokenService {
       if (userProfile.email_verified !== undefined) claims.email_verified = userProfile.email_verified;
     }
 
+    // Add Keycloak-specific claims when in Keycloak mode
+    if (isKeycloakMode) {
+      // preferred_username is commonly used by Keycloak
+      if (userProfile.username) {
+        claims.preferred_username = userProfile.username;
+      } else if (userProfile.email) {
+        claims.preferred_username = userProfile.email;
+      }
+
+      // Add given_name and family_name even if profile scope is not requested (Keycloak behavior)
+      if (userProfile.given_name) claims.given_name = userProfile.given_name;
+      if (userProfile.family_name) claims.family_name = userProfile.family_name;
+
+      // Add other Keycloak-specific claims
+      if (userProfile.name) claims.name = userProfile.name;
+      if (userProfile.email) claims.email = userProfile.email;
+      if (userProfile.email_verified !== undefined) claims.email_verified = userProfile.email_verified;
+    }
+
     // Include any additional custom claims
     Object.keys(userProfile).forEach(key => {
-      if (!['sub', 'name', 'given_name', 'family_name', 'email', 'email_verified', 'picture', 'locale'].includes(key)) {
+      if (!['sub', 'name', 'given_name', 'family_name', 'email', 'email_verified', 'picture', 'locale', 'username'].includes(key)) {
         claims[key] = userProfile[key];
       }
     });

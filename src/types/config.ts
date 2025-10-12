@@ -11,6 +11,7 @@ export interface UserProfile {
   email_verified?: boolean;
   picture?: string;
   locale?: string;
+  username?: string; // For Keycloak compatibility
   [key: string]: any; // Additional custom claims
 }
 

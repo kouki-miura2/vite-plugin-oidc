@@ -7,6 +7,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import oidcPlugin from "../../src/index.js";
 import { createOIDCMiddleware } from "../../src/middleware/index.js";
+import { getTestConfig } from "../helpers/TestConfig.js";
 import { PKCETestHelper } from "../helpers/PKCETestHelper";
 import type { OIDCPluginConfig } from "../../src/types/index.js";
 
@@ -207,12 +208,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
     let plugin: any;
 
     beforeEach(() => {
-      plugin = oidcPlugin({
-        development: {
-          enableLogging: false,
-          showWarnings: false
-        }
-      });
+      plugin = oidcPlugin(getTestConfig());
       
       plugin.configureServer!(mockServer as any);
       
@@ -571,12 +567,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
     let plugin: any;
 
     beforeEach(() => {
-      plugin = oidcPlugin({
-        development: {
-          enableLogging: false,
-          showWarnings: false
-        }
-      });
+      plugin = oidcPlugin(getTestConfig());
       
       plugin.configureServer!(mockServer as any);
       

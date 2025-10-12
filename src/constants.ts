@@ -12,6 +12,14 @@ export const ENDPOINTS = {
   LOGIN: '/login'
 } as const;
 
+// Keycloak-compatible endpoint paths
+export const KEYCLOAK_ENDPOINTS = {
+  AUTHORIZE: '/protocol/openid-connect/auth',
+  TOKEN: '/protocol/openid-connect/token',
+  USERINFO: '/protocol/openid-connect/userinfo',
+  LOGOUT: '/protocol/openid-connect/logout'
+} as const;
+
 // OIDC error codes
 export const ERROR_CODES = {
   INVALID_REQUEST: 'invalid_request',

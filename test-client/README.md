@@ -17,7 +17,7 @@ Configure your OIDC provider settings in the `.env` file:
 # VITE_AUTHORITY: Identity Provider (IdP) endpoint URL
 # This must exactly match your OIDC provider's issuer URL
 # Used by: index.html with oidc-client-ts library
-VITE_AUTHORITY=http://localhost:5173/oidc
+VITE_AUTHORITY=http://localhost:5173/realms/myrealm
 # Example: To test with real Keycloak server instead of vite-plugin-oidc:
 #VITE_AUTHORITY=http://localhost:8080/realms/myrealm
 
@@ -31,10 +31,10 @@ VITE_CLIENT_ID=test-client
 # =============================================================================
 
 # VITE_KEYCLOAK_AUTHORITY: Keycloak server base URL
-# This should be the root URL of your Keycloak server (without realm path)
-# Example: http://localhost:8080/ or https://auth.example.com/
+# For vite-plugin-oidc compatibility, use the full realm path
+# This should match the basePath in vite.config.ts
 # Used by: index-kc.html with keycloak-js library
-VITE_KEYCLOAK_AUTHORITY=http://localhost:8080/
+VITE_KEYCLOAK_AUTHORITY=http://localhost:5173/
 
 # VITE_KEYCLOAK_REALM: Keycloak realm name
 # This is the realm where your client is registered in Keycloak

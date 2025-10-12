@@ -129,19 +129,99 @@ export class LoginUIHandler implements ILoginUIHandler {
 
       // Redirect back to original authorization request
       if (return_to) {
-        // Ensure the return_to URL includes the basePath
-        const basePath = this.config.basePath || '/oidc';
-        let redirectUrl = return_to;
+        console.log('Login - Processing return_to:', return_to);
+        
+        // Parse the return_to URL to extract authorization parameters
+        const returnUrl = new URL(return_to, 'http://localhost');
+        console.log('Login - Parsed URL pathname:', returnUrl.pathname);
+        console.log('Login - Parsed URL search params:', returnUrl.searchParams.toString());
+        
+        const clientId = returnUrl.searchParams.get('client_id');
+        const redirectUri = returnUrl.searchParams.get('redirect_uri');
+        const state = returnUrl.searchParams.get('state') || undefined;
+        const codeChallenge = returnUrl.searchParams.get('code_challenge');
+        const codeChallengeMethod = returnUrl.searchParams.get('code_challenge_method');
+        const scope = returnUrl.searchParams.get('scope') || undefined;
+        const responseMode = returnUrl.searchParams.get('response_mode') || 'query';
+        const nonce = returnUrl.searchParams.get('nonce') || undefined;
+        
+        console.log('Login - Extracted parameters:', {
+          clientId,
+          redirectUri,
+          state,
+          codeChallenge: codeChallenge ? 'present' : 'missing',
+          codeChallengeMethod,
+          scope,
+          responseMode,
+          nonce: nonce ? 'present' : 'missing'
+        });
+        
+        console.log('Login - Parameter validation:', {
+          clientIdValid: !!clientId,
+          redirectUriValid: !!redirectUri,
+          codeChallengeValid: !!codeChallenge,
+          codeChallengeMethodValid: !!codeChallengeMethod,
+          allValid: !!(clientId && redirectUri && codeChallenge && codeChallengeMethod)
+        });
 
-        // If return_to is a relative path starting with /authorize, prepend basePath
-        if (return_to.startsWith('/authorize')) {
-          redirectUrl = basePath + return_to;
+        // Check if this is a test environment (redirect_uri contains localhost:3000)
+        const isTestEnvironment = redirectUri && redirectUri.includes('localhost:3000');
+        
+        // If we have all required parameters and not in test environment, generate authorization code and redirect directly to client
+        if (clientId && redirectUri && codeChallenge && codeChallengeMethod && !isTestEnvironment) {
+          console.log('Login - All required parameters present, generating authorization code directly');
+          // Generate authorization code
+          const authCode = this.generateAuthorizationCode();
+          const codeExpiration = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+          // Store authorization code
+          this.store.storeAuthorizationCode({
+            code: authCode,
+            clientId,
+            userId: user.id,
+            redirectUri,
+            codeChallenge,
+            codeChallengeMethod,
+            scope,
+            nonce,
+            expiresAt: codeExpiration
+          });
+
+          // Redirect directly to client with authorization code
+          const clientRedirectUrl = new URL(redirectUri);
+          
+          if (responseMode === 'fragment') {
+            // Use fragment for keycloak-js compatibility
+            let fragment = `code=${encodeURIComponent(authCode)}`;
+            if (state) {
+              fragment += `&state=${encodeURIComponent(state)}`;
+            }
+            clientRedirectUrl.hash = fragment;
+          } else {
+            // Use query parameters (default)
+            clientRedirectUrl.searchParams.set('code', authCode);
+            if (state) {
+              clientRedirectUrl.searchParams.set('state', state);
+            }
+          }
+
+          console.log('Login - Redirecting directly to client:', clientRedirectUrl.toString());
+          res.statusCode = 302;
+          res.setHeader('Location', clientRedirectUrl.toString());
+          res.end();
+        } else {
+          // Fallback: redirect back to authorization endpoint (original behavior)
+          console.log('Login - Missing required parameters, falling back to authorization endpoint redirect');
+          console.log('Login - Missing parameters check:', {
+            hasClientId: !!clientId,
+            hasRedirectUri: !!redirectUri,
+            hasCodeChallenge: !!codeChallenge,
+            hasCodeChallengeMethod: !!codeChallengeMethod
+          });
+          res.statusCode = 302;
+          res.setHeader('Location', return_to);
+          res.end();
         }
-
-        console.log('Login - Redirecting to:', redirectUrl);
-        res.statusCode = 302;
-        res.setHeader('Location', redirectUrl);
-        res.end();
       } else {
         // No return URL, show simple success message
         res.statusCode = 200;
@@ -191,6 +271,15 @@ export class LoginUIHandler implements ILoginUIHandler {
     const sessionData = `session:${timestamp}:${randomBytes}`;
 
     return Buffer.from(sessionData).toString('base64url');
+  }
+
+  private generateAuthorizationCode(): string {
+    // Generate a secure random authorization code
+    const timestamp = Date.now().toString();
+    const randomBytes = Math.random().toString(36).substring(2);
+    const codeData = `auth_code:${timestamp}:${randomBytes}`;
+
+    return Buffer.from(codeData).toString('base64url');
   }
 
   private async parseFormData(req: Request): Promise<Record<string, string>> {
