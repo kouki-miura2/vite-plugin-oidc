@@ -4,7 +4,7 @@ import oidc from 'vite-plugin-oidc'
 export default defineConfig({
   plugins: [
     oidc({
-      basePath: '/realms/myrealm',
+      basePath: '/oidc',
       clients: [
         {
           client_id: 'test-client',
