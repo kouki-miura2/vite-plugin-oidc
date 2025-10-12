@@ -5,6 +5,48 @@ This application implements OpenID Connect authentication using the Authorizatio
 
 You can also specify external IdPs (e.g., Keycloak running on localhost:8080) in the .env file to test this client's functionality.
 
+## Configuration
+
+Configure your OIDC provider settings in the `.env` file:
+
+```bash
+# =============================================================================
+# OIDC Client Configuration (for index.html using oidc-client-ts)
+# =============================================================================
+
+# VITE_AUTHORITY: Identity Provider (IdP) endpoint URL
+# This must exactly match your OIDC provider's issuer URL
+# Used by: index.html with oidc-client-ts library
+VITE_AUTHORITY=http://localhost:5173/oidc
+# Example: To test with real Keycloak server instead of vite-plugin-oidc:
+#VITE_AUTHORITY=http://localhost:8080/realms/myrealm
+
+# VITE_CLIENT_ID: OAuth2/OIDC client identifier
+# This must match the client_id registered in your OIDC provider
+# Used by: index.html with oidc-client-ts library
+VITE_CLIENT_ID=test-client
+
+# =============================================================================
+# Keycloak Configuration (for index-kc.html using keycloak-js)
+# =============================================================================
+
+# VITE_KEYCLOAK_AUTHORITY: Keycloak server base URL
+# This should be the root URL of your Keycloak server (without realm path)
+# Example: http://localhost:8080/ or https://auth.example.com/
+# Used by: index-kc.html with keycloak-js library
+VITE_KEYCLOAK_AUTHORITY=http://localhost:8080/
+
+# VITE_KEYCLOAK_REALM: Keycloak realm name
+# This is the realm where your client is registered in Keycloak
+# Used by: index-kc.html with keycloak-js library
+VITE_KEYCLOAK_REALM=myrealm
+
+# VITE_KEYCLOAK_CLIENT_ID: Keycloak client identifier
+# This must match the client ID configured in your Keycloak realm
+# Used by: index-kc.html with keycloak-js library
+VITE_KEYCLOAK_CLIENT_ID=test-client
+```
+
 ## Getting Started
 
 ```bash
@@ -80,19 +122,3 @@ sequenceDiagram
 2. Library automatically applies PKCE extension
 3. Callback handling exchanges authorization code for tokens
 4. State management using session storage and local storage
-
-## Configuration
-
-Configure your OIDC provider settings in the `.env` file:
-
-```bash
-# VITE_AUTHORITY is the IdP (Identity Provider) endpoint
-# The VITE_AUTHORITY value must match your OIDC provider's issuer URL
-VITE_AUTHORITY=http://localhost:5173/realms/myrealm
-# For example, to test this client with Keycloak running on localhost:8080 instead of vite-plugin-oidc, use:
-#VITE_AUTHORITY=http://localhost:8080/realms/myrealm
-
-# VITE_CLIENT_ID is the OAuth2/OIDC client identifier registered with the IdP
-# This value must match a client_id configured in your OIDC provider
-VITE_CLIENT_ID=test-client
-```
