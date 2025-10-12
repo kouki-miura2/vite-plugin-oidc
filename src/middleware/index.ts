@@ -46,12 +46,16 @@ function getExpectedMethods(endpoint: string): string[] {
         case '/.well-known/openid-configuration':
         case '/jwks':
         case '/authorize':
+        case '/protocol/openid-connect/auth':
         case '/userinfo':
+        case '/protocol/openid-connect/userinfo':
         case '/logout':
+        case '/protocol/openid-connect/logout':
             return ['GET'];
         case '/login':
             return ['GET', 'POST'];
         case '/token':
+        case '/protocol/openid-connect/token':
             return ['POST'];
         default:
             return ['GET'];
@@ -81,7 +85,8 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
     const tokenService = new TokenService(
         config.jwt,
         config.issuer,
-        config.tokenExpiration
+        config.tokenExpiration,
+        config.basePath
     );
 
     // Initialize handlers with correct constructor signatures
@@ -156,7 +161,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 return;
             }
 
-            if (urlPath === '/authorize' && method === 'GET') {
+            if ((urlPath === '/authorize' || urlPath === '/protocol/openid-connect/auth') && method === 'GET') {
                 await authorizationHandler.handleAuthorize(req, res);
                 return;
             }
@@ -193,7 +198,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 return;
             }
 
-            if (urlPath === '/token' && method === 'POST') {
+            if ((urlPath === '/token' || urlPath === '/protocol/openid-connect/token') && method === 'POST') {
                 // Ensure request body is available for form parsing
                 if (!req.body && req.readable !== false && req.on) {
                     // Read the request body if it hasn't been read yet
@@ -220,12 +225,12 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 return;
             }
 
-            if (urlPath === '/userinfo' && method === 'GET') {
+            if ((urlPath === '/userinfo' || urlPath === '/protocol/openid-connect/userinfo') && method === 'GET') {
                 await userInfoHandler.handleUserInfo(req, res);
                 return;
             }
 
-            if (urlPath === '/logout' && method === 'GET') {
+            if ((urlPath === '/logout' || urlPath === '/protocol/openid-connect/logout') && method === 'GET') {
                 await logoutHandler.handleLogout(req, res);
                 return;
             }
@@ -235,10 +240,14 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 '/.well-known/openid-configuration',
                 '/jwks',
                 '/authorize',
+                '/protocol/openid-connect/auth',
                 '/login',
                 '/token',
+                '/protocol/openid-connect/token',
                 '/userinfo',
-                '/logout'
+                '/protocol/openid-connect/userinfo',
+                '/logout',
+                '/protocol/openid-connect/logout'
             ];
 
             if (knownEndpoints.includes(urlPath)) {

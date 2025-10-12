@@ -10,7 +10,7 @@ import type {
 } from '../types/handlers.js';
 import type { DiscoveryDocument } from '../types/oidc.js';
 import type { OIDCPluginConfig } from '../types/config.js';
-import { ENDPOINTS, SUPPORTED } from '../constants.js';
+import { ENDPOINTS, KEYCLOAK_ENDPOINTS, SUPPORTED } from '../constants.js';
 
 export class DiscoveryHandler implements IDiscoveryHandler {
   private config: OIDCPluginConfig;
@@ -58,11 +58,20 @@ export class DiscoveryHandler implements IDiscoveryHandler {
       ? this.issuer 
       : `${this.issuer}${this.basePath}`;
 
+    // Check if this is Keycloak-compatible mode (basePath contains /realms)
+    const isKeycloakMode = this.basePath.includes('/realms');
+
+    // Use appropriate endpoint paths based on mode
+    const authEndpoint = isKeycloakMode ? KEYCLOAK_ENDPOINTS.AUTHORIZE : ENDPOINTS.AUTHORIZE;
+    const tokenEndpoint = isKeycloakMode ? KEYCLOAK_ENDPOINTS.TOKEN : ENDPOINTS.TOKEN;
+    const userinfoEndpoint = isKeycloakMode ? KEYCLOAK_ENDPOINTS.USERINFO : ENDPOINTS.USERINFO;
+    const logoutEndpoint = isKeycloakMode ? KEYCLOAK_ENDPOINTS.LOGOUT : '/logout';
+
     return {
       issuer: this.issuer,
-      authorization_endpoint: `${baseUrl}${ENDPOINTS.AUTHORIZE}`,
-      token_endpoint: `${baseUrl}${ENDPOINTS.TOKEN}`,
-      userinfo_endpoint: `${baseUrl}${ENDPOINTS.USERINFO}`,
+      authorization_endpoint: `${baseUrl}${authEndpoint}`,
+      token_endpoint: `${baseUrl}${tokenEndpoint}`,
+      userinfo_endpoint: `${baseUrl}${userinfoEndpoint}`,
       jwks_uri: `${baseUrl}${ENDPOINTS.JWKS}`,
       response_types_supported: [...SUPPORTED.RESPONSE_TYPES],
       grant_types_supported: [...SUPPORTED.GRANT_TYPES],
@@ -77,7 +86,7 @@ export class DiscoveryHandler implements IDiscoveryHandler {
       response_modes_supported: ['query'],
       
       // Additional endpoints that might be useful
-      end_session_endpoint: `${baseUrl}/logout`,
+      end_session_endpoint: `${baseUrl}${logoutEndpoint}`,
       
       // Claims parameter support
       claims_parameter_supported: false,

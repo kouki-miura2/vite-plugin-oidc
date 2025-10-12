@@ -7,6 +7,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import oidcPlugin from "../../src/index.js";
 import { PKCETestHelper } from "../helpers/PKCETestHelper";
+import { getTestConfig } from "../helpers/TestConfig.js";
 
 // Mock Vite server interface
 interface MockViteServer {
@@ -61,12 +62,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
     vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     // Initialize plugin with test configuration
-    plugin = oidcPlugin({
-      development: {
-        enableLogging: false,
-        showWarnings: false
-      }
-    });
+    plugin = oidcPlugin(getTestConfig());
     
     plugin.configureServer!(mockServer as any);
     

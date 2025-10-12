@@ -47,67 +47,16 @@ const defaultConfig: Required<OIDCPluginConfig> = {
     }
 };
 
-/**
- * Get development-only test configuration
- */
-function getDevTestConfig(): Partial<OIDCPluginConfig> {
-    const isDevelopment = process.env.NODE_ENV !== 'production' &&
-        process.env.VITE_ENV !== 'production' &&
-        process.env.MODE !== 'production';
 
-    if (!isDevelopment) {
-        return {};
-    }
-
-    return {
-        users: [
-            {
-                id: 'johndoe',
-                username: 'johndoe',
-                password: 'password123',
-                profile: {
-                    sub: 'johndoe',
-                    name: 'John Doe',
-                    email: 'john.doe@example.com',
-                    email_verified: true,
-                }
-            },
-        ],
-        clients: [
-            {
-                client_id: 'test_client',
-                redirect_uris: ['http://localhost:5173/', 'http://localhost:3000/callback'],
-                response_types: ['code'],
-                grant_types: ['authorization_code']
-            }
-        ],
-        loginUI: {
-            title: 'Test Client'
-        }
-    };
-}
 
 /**
  * Creates the OIDC Vite plugin
  */
 export default function oidcPlugin(userConfig: OIDCPluginConfig = {}): Plugin {
-    // Merge default config with dev test config and user config
-    const devTestConfig = getDevTestConfig();
-    const config = { 
-        ...defaultConfig, 
-        ...devTestConfig,
-        ...userConfig,
-        // Merge arrays properly
-        users: [
-            ...(defaultConfig.users || []),
-            ...(devTestConfig.users || []),
-            ...(userConfig.users || [])
-        ],
-        clients: [
-            ...(defaultConfig.clients || []),
-            ...(devTestConfig.clients || []),
-            ...(userConfig.clients || [])
-        ]
+    // Merge default config with user config
+    const config = {
+        ...defaultConfig,
+        ...userConfig
     };
     let middleware: any = null;
 

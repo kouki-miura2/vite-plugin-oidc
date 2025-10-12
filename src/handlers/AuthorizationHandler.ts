@@ -70,9 +70,13 @@ export class AuthorizationHandler implements IAuthorizationHandler {
           redirectUri: params.redirect_uri,
           requestId
         });
-        this.sendErrorResponse(res, validation.error!, params.redirect_uri, params.state);
+        this.sendErrorResponse(res, validation.error!, params.redirect_uri, params.state, params.response_mode);
         return;
       }
+
+      // Check if this is a silent SSO check (from iframe)
+      const isSilentCheck = this.isSilentSSOCheck(req, params);
+      console.log('Authorization - Is silent SSO check:', isSilentCheck);
 
       // Check if user is already authenticated (has session)
       const sessionId = this.getSessionFromRequest(req);
@@ -116,16 +120,27 @@ export class AuthorizationHandler implements IAuthorizationHandler {
         });
 
         // Redirect back to client with authorization code
-        this.redirectWithCode(res, params.redirect_uri, authCode, params.state);
+        this.redirectWithCode(res, params.redirect_uri, authCode, params.state, params.response_mode);
       } else {
-        // User not authenticated, redirect to login page
-        console.log('Authorization - No valid session found, redirecting to login');
-        logger.debug('User not authenticated, redirecting to login', {
-          endpoint: '/authorize',
-          clientId: params.client_id,
-          requestId
-        });
-        this.redirectToLogin(res, req.url || '');
+        // User not authenticated
+        if (isSilentCheck) {
+          // For silent SSO checks, return an error instead of redirecting
+          console.log('Authorization - Silent SSO check failed, returning error');
+          const oidcError = ValidationUtil.createErrorResponse(
+            'login_required',
+            'User authentication is required'
+          );
+          this.sendErrorResponse(res, oidcError, params.redirect_uri, params.state, params.response_mode);
+        } else {
+          // For normal requests, redirect to login page
+          console.log('Authorization - No valid session found, redirecting to login');
+          logger.debug('User not authenticated, redirecting to login', {
+            endpoint: '/authorize',
+            clientId: params.client_id,
+            requestId
+          });
+          this.redirectToLogin(res, req.url || '');
+        }
       }
 
     } catch (error) {
@@ -170,7 +185,8 @@ export class AuthorizationHandler implements IAuthorizationHandler {
       state: searchParams.get('state') || undefined,
       code_challenge: searchParams.get('code_challenge') || '',
       code_challenge_method: searchParams.get('code_challenge_method') || '',
-      nonce: searchParams.get('nonce') || undefined
+      nonce: searchParams.get('nonce') || undefined,
+      response_mode: searchParams.get('response_mode') || undefined
     };
   }
 
@@ -198,6 +214,29 @@ export class AuthorizationHandler implements IAuthorizationHandler {
     return cookies;
   }
 
+  private isSilentSSOCheck(req: Request, params: AuthorizationParams): boolean {
+    // Check for prompt=none parameter (standard OIDC silent authentication)
+    const url = new URL(req.url || '', 'http://localhost');
+    const prompt = url.searchParams.get('prompt');
+    if (prompt === 'none') {
+      return true;
+    }
+
+    // Check if request comes from iframe (silent-check-sso.html)
+    const referer = req.headers.referer || req.headers.referrer;
+    if (referer && referer.includes('silent-check-sso.html')) {
+      return true;
+    }
+
+    // Check User-Agent for iframe indicators (some browsers)
+    const userAgent = req.headers['user-agent'] || '';
+    if (userAgent.includes('iframe') || userAgent.includes('silent')) {
+      return true;
+    }
+
+    return false;
+  }
+
   private redirectToLogin(res: Response, originalUrl: string): void {
     const basePath = this.config.basePath || '/oidc';
     const loginUrl = `${basePath}/login?return_to=${encodeURIComponent(originalUrl)}`;
@@ -207,11 +246,22 @@ export class AuthorizationHandler implements IAuthorizationHandler {
     res.end();
   }
 
-  private redirectWithCode(res: Response, redirectUri: string, code: string, state?: string): void {
+  private redirectWithCode(res: Response, redirectUri: string, code: string, state?: string, responseMode?: string): void {
     const url = new URL(redirectUri);
-    url.searchParams.set('code', code);
-    if (state) {
-      url.searchParams.set('state', state);
+    
+    if (responseMode === 'fragment') {
+      // Use fragment for keycloak-js compatibility
+      let fragment = `code=${encodeURIComponent(code)}`;
+      if (state) {
+        fragment += `&state=${encodeURIComponent(state)}`;
+      }
+      url.hash = fragment;
+    } else {
+      // Use query parameters (default)
+      url.searchParams.set('code', code);
+      if (state) {
+        url.searchParams.set('state', state);
+      }
     }
 
     res.statusCode = 302;
@@ -223,21 +273,38 @@ export class AuthorizationHandler implements IAuthorizationHandler {
     return `auth_${Date.now()}_${Math.random().toString(36).substring(2)}`;
   }
 
-  private sendErrorResponse(res: Response, error: OIDCError, redirectUri?: string, state?: string): void {
+  private sendErrorResponse(res: Response, error: OIDCError, redirectUri?: string, state?: string, responseMode?: string): void {
     const statusCode = ValidationUtil.getErrorStatusCode(error.error);
     
     if (redirectUri) {
       // Redirect error to client
       const url = new URL(redirectUri);
-      url.searchParams.set('error', error.error);
-      if (error.error_description) {
-        url.searchParams.set('error_description', error.error_description);
-      }
-      if (error.error_uri) {
-        url.searchParams.set('error_uri', error.error_uri);
-      }
-      if (state) {
-        url.searchParams.set('state', state);
+      
+      if (responseMode === 'fragment') {
+        // Use fragment for keycloak-js compatibility
+        let fragment = `error=${encodeURIComponent(error.error)}`;
+        if (error.error_description) {
+          fragment += `&error_description=${encodeURIComponent(error.error_description)}`;
+        }
+        if (error.error_uri) {
+          fragment += `&error_uri=${encodeURIComponent(error.error_uri)}`;
+        }
+        if (state) {
+          fragment += `&state=${encodeURIComponent(state)}`;
+        }
+        url.hash = fragment;
+      } else {
+        // Use query parameters (default)
+        url.searchParams.set('error', error.error);
+        if (error.error_description) {
+          url.searchParams.set('error_description', error.error_description);
+        }
+        if (error.error_uri) {
+          url.searchParams.set('error_uri', error.error_uri);
+        }
+        if (state) {
+          url.searchParams.set('state', state);
+        }
       }
 
       res.statusCode = 302;

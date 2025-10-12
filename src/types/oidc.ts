@@ -11,6 +11,7 @@ export interface AuthorizationParams {
   code_challenge: string;
   code_challenge_method: string;
   nonce?: string;
+  response_mode?: string;
 }
 
 export interface TokenParams {
