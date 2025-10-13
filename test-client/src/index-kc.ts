@@ -103,7 +103,7 @@ async function init() {
         console.log('Login button clicked')
         try {
             keycloak.login({
-                redirectUri: window.location.origin + '/index-kc.html',
+                redirectUri: window.location.origin + import.meta.env.BASE_URL + 'index-kc.html',
             })
         } catch (error) {
             console.error('Login error:', error)
@@ -114,7 +114,7 @@ async function init() {
         console.log('Logout button clicked')
         try {
             keycloak.logout({
-                redirectUri: window.location.origin + '/index-kc.html',
+                redirectUri: window.location.origin + import.meta.env.BASE_URL + 'index-kc.html',
             })
         } catch (error) {
             console.error('Logout error:', error)
@@ -189,7 +189,7 @@ async function init() {
                 console.log('Found stored tokens, using check-sso to restore session');
                 authenticated = await keycloak.init({
                     onLoad: 'check-sso',
-                    silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+                    silentCheckSsoRedirectUri: window.location.origin + import.meta.env.BASE_URL + 'silent-check-sso.html',
                     pkceMethod: 'S256',
                     checkLoginIframe: false,
                     enableLogging: true,

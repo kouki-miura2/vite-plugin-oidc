@@ -3,10 +3,10 @@ import { UserManager, WebStorageStateStore, type User } from 'oidc-client-ts'
 const oidcConfig = {
   authority: import.meta.env.VITE_AUTHORITY,
   client_id: import.meta.env.VITE_CLIENT_ID,
-  redirect_uri: window.location.origin + window.location.pathname,
+  redirect_uri: window.location.origin + import.meta.env.BASE_URL,
   response_type: 'code',
   scope: 'openid profile email',
-  post_logout_redirect_uri: window.location.origin + window.location.pathname,
+  post_logout_redirect_uri: window.location.origin + import.meta.env.BASE_URL,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   stateStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
