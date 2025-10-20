@@ -5,6 +5,34 @@ This application implements OpenID Connect authentication using the Authorizatio
 
 You can also specify external IdPs (e.g., Keycloak running on localhost:8080) in the .env file to test this client's functionality.
 
+## Available Samples
+
+This test client provides two sample implementations:
+
+### 1. index.html - Using oidc-client-ts
+- **Library**: [oidc-client-ts](https://github.com/authts/oidc-client-ts)
+- **Use case**: Standard OIDC client implementation compatible with any OIDC-compliant provider
+- **Access**: `http://localhost:5173/` (default page)
+- **Configuration**: Uses `VITE_AUTHORITY` and `VITE_CLIENT_ID` from .env
+
+### 2. index-kc.html - Using keycloak-js
+- **Library**: [keycloak-js](https://www.keycloak.org/docs/latest/securing_apps/#_javascript_adapter)
+- **Use case**: Keycloak-specific client implementation with Keycloak adapter features
+- **Access**: `http://localhost:5173/index-kc.html`
+- **Configuration**: Uses `VITE_KEYCLOAK_AUTHORITY`, `VITE_KEYCLOAK_REALM`, and `VITE_KEYCLOAK_CLIENT_ID` from .env
+
+Both samples demonstrate the same authentication flow (Authorization Code + PKCE) but use different client libraries.
+
+## Setup
+
+1. **Create environment configuration file**:
+   ```bash
+   # Copy the example file to create your .env
+   cp .env.example .env
+   ```
+
+2. **Edit the `.env` file** to configure your OIDC provider settings (see Configuration section below for details)
+
 ## Configuration
 
 Configure your OIDC provider settings in the `.env` file:
@@ -107,8 +135,17 @@ sequenceDiagram
 
 ### Libraries Used
 
-- `oidc-client-ts`: TypeScript-compatible OpenID Connect client library
+#### oidc-client-ts (used in index.html)
+- TypeScript-compatible OpenID Connect client library
+- Works with any OIDC-compliant provider
 - PKCE is automatically handled by the library
+- Provides extensive configuration options and event handling
+
+#### keycloak-js (used in index-kc.html)
+- Official Keycloak JavaScript adapter
+- Optimized for Keycloak-specific features
+- PKCE support built-in
+- Provides Keycloak-specific utilities and token management
 
 ### Security Features
 
