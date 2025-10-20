@@ -189,6 +189,8 @@ development: {
 
 ## Supported OIDC Features
 
+This plugin implements the **standard OIDC protocol** with the following features:
+
 ### **Scopes**
 - `openid` (required)
 - `profile` (name, given_name, family_name, picture, locale)
@@ -205,6 +207,80 @@ development: {
 
 ### **Code Challenge Methods**
 - `S256` (SHA256, recommended and only supported method)
+
+## Keycloak Compatibility (Optional)
+
+While this plugin primarily implements the **standard OIDC protocol**, it also includes optional Keycloak-compatible endpoint paths for developers who want to test applications designed for Keycloak.
+
+### Using Keycloak-Compatible Mode
+
+To enable Keycloak-compatible endpoints, simply include `/realms/{realm-name}` in your `basePath`:
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    oidc({
+      basePath: '/realms/myrealm',  // Keycloak-style path
+      clients: [
+        {
+          client_id: 'my-app',
+          redirect_uris: ['http://localhost:5173/callback'],
+          response_types: ['code'],
+          grant_types: ['authorization_code']
+        }
+      ],
+      users: [
+        {
+          id: 'user1',
+          username: 'testuser',
+          password: 'password',
+          profile: {
+            sub: 'user1',
+            name: 'Test User',
+            email: 'test@example.com',
+            username: 'testuser'  // Keycloak includes username in profile
+          }
+        }
+      ]
+    })
+  ]
+});
+```
+
+### Keycloak-Compatible Endpoints
+
+When using a basePath containing `/realms/`, the plugin automatically uses Keycloak-style endpoint paths:
+
+| Standard OIDC | Keycloak-Compatible |
+|---------------|---------------------|
+| `/authorize` | `/protocol/openid-connect/auth` |
+| `/token` | `/protocol/openid-connect/token` |
+| `/userinfo` | `/protocol/openid-connect/userinfo` |
+| `/logout` | `/protocol/openid-connect/logout` |
+
+**Example URLs** (with `basePath: '/realms/myrealm'`):
+```
+http://localhost:5173/realms/myrealm/.well-known/openid-configuration
+http://localhost:5173/realms/myrealm/protocol/openid-connect/auth
+http://localhost:5173/realms/myrealm/protocol/openid-connect/token
+http://localhost:5173/realms/myrealm/protocol/openid-connect/userinfo
+```
+
+### Using keycloak-js Client Library
+
+The plugin works with the official `keycloak-js` library. See the [test-client/index-kc.html](test-client/index-kc.html) example for a working implementation.
+
+```bash
+npm install keycloak-js
+```
+
+### Important Notes
+
+- **Keycloak compatibility is optional** - the plugin works with any standard OIDC client library
+- **Standard OIDC is the primary focus** - use regular paths (e.g., `basePath: '/oidc'`) for standard OIDC compliance
+- The Keycloak-compatible mode is provided as a convenience for testing applications originally designed for Keycloak
+- All core OIDC features work identically in both modes
 
 ## Complete Configuration Example
 
