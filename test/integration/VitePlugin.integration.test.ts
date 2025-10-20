@@ -765,4 +765,305 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       expect(mockServer2.middlewares.use).toHaveBeenCalledWith('/oidc2', expect.any(Function));
     });
   });
+
+  describe('Third Party Cookies Support (Keycloak-js Compatibility)', () => {
+    let middleware: any;
+    let plugin: any;
+
+    beforeEach(() => {
+      plugin = oidcPlugin(getTestConfig());
+
+      plugin.configureServer!(mockServer as any);
+
+      // Extract the registered middleware
+      const middlewareCall = (mockServer.middlewares.use as any).mock.calls[0];
+      middleware = middlewareCall[1];
+    });
+
+    describe('3p-cookies Step1 Endpoint', () => {
+      it('should serve step1.html for 3rd party cookie detection', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step1.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const step1Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, step1Response, vi.fn());
+
+        expect(step1Response.statusCode).toBe(200);
+        expect(step1Response.setHeader).toHaveBeenCalledWith('Content-Type', 'text/html; charset=utf-8');
+        expect(step1Response.setHeader).toHaveBeenCalledWith('Cache-Control', 'no-store, no-cache, must-revalidate');
+        expect(step1Response.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache');
+
+        const html = (step1Response.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('<!doctype html>');
+        expect(html).toContain('checkStorageAccess');
+        expect(html).toContain('KEYCLOAK_3P_COOKIE');
+        expect(html).toContain('http://localhost:5173/oidc/protocol/openid-connect/3p-cookies/step2.html');
+      });
+
+      it('should generate correct step2 URL with custom basePath', async () => {
+        const customPlugin = oidcPlugin({
+          ...getTestConfig(),
+          basePath: '/auth'
+        });
+
+        customPlugin.configureServer!(mockServer as any);
+        const customMiddleware = (mockServer.middlewares.use as any).mock.calls[1][1];
+
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step1.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const step1Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await customMiddleware(request, step1Response, vi.fn());
+
+        const html = (step1Response.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('http://localhost:5173/auth/protocol/openid-connect/3p-cookies/step2.html');
+      });
+
+      it('should set secure cookie attributes for HTTPS', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step1.html',
+          headers: {
+            host: 'example.com',
+            'x-forwarded-proto': 'https'
+          }
+        };
+
+        const step1Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, step1Response, vi.fn());
+
+        const html = (step1Response.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('Max-Age=60; SameSite=None; Secure');
+        expect(html).toContain('https://example.com');
+      });
+
+      it('should set non-secure cookie attributes for HTTP localhost', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step1.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const step1Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, step1Response, vi.fn());
+
+        const html = (step1Response.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('Max-Age=60');
+        expect(html).not.toContain('SameSite=None; Secure');
+      });
+    });
+
+    describe('3p-cookies Step2 Endpoint', () => {
+      it('should serve step2.html for 3rd party cookie verification', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step2.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const step2Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, step2Response, vi.fn());
+
+        expect(step2Response.statusCode).toBe(200);
+        expect(step2Response.setHeader).toHaveBeenCalledWith('Content-Type', 'text/html; charset=utf-8');
+        expect(step2Response.setHeader).toHaveBeenCalledWith('Cache-Control', 'no-store, no-cache, must-revalidate');
+        expect(step2Response.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache');
+
+        const html = (step2Response.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('<!doctype html>');
+        expect(html).toContain('document.cookie.includes("KEYCLOAK_3P_COOKIE")');
+        expect(html).toContain('window.parent.postMessage');
+      });
+
+      it('should check for KEYCLOAK_3P_COOKIE and clear it', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step2.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const step2Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, step2Response, vi.fn());
+
+        const html = (step2Response.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('KEYCLOAK_3P_COOKIE_SAMESITE=; Max-Age=0');
+        expect(html).toContain('KEYCLOAK_3P_COOKIE=; Max-Age=0');
+        expect(html).toContain('supported');
+        expect(html).toContain('unsupported');
+      });
+    });
+
+    describe('Login Status Iframe Endpoint (checkLoginIframe support)', () => {
+      it('should serve login-status-iframe.html for session checking', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/login-status-iframe.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const iframeResponse = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, iframeResponse, vi.fn());
+
+        expect(iframeResponse.statusCode).toBe(200);
+        expect(iframeResponse.setHeader).toHaveBeenCalledWith('Content-Type', 'text/html; charset=utf-8');
+        expect(iframeResponse.setHeader).toHaveBeenCalledWith('Cache-Control', 'no-store, no-cache, must-revalidate');
+        expect(iframeResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache');
+
+        const html = (iframeResponse.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('<!doctype html>');
+        expect(html).toContain("window.addEventListener('message'");
+        expect(html).toContain('sessionState');
+      });
+
+      it('should handle message events for session status checking', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/login-status-iframe.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const iframeResponse = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, iframeResponse, vi.fn());
+
+        const html = (iframeResponse.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('originParam');
+        expect(html).toContain('unchanged');
+        expect(html).toContain('event.source.postMessage');
+      });
+
+      it('should notify parent window when iframe is ready', async () => {
+        const request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/login-status-iframe.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const iframeResponse = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(request, iframeResponse, vi.fn());
+
+        const html = (iframeResponse.end as any).mock.calls[0][0] as string;
+        expect(html).toContain('window.parent !== window');
+        expect(html).toContain("window.parent.postMessage('ready', '*')");
+      });
+    });
+
+    describe('Complete 3P Cookies Detection Flow', () => {
+      it('should complete full 3rd party cookie detection workflow', async () => {
+        // Step 1: Load step1.html
+        const step1Request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step1.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const step1Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(step1Request, step1Response, vi.fn());
+
+        expect(step1Response.statusCode).toBe(200);
+
+        const step1HTML = (step1Response.end as any).mock.calls[0][0] as string;
+        expect(step1HTML).toContain('checkStorageAccess');
+        expect(step1HTML).toContain('attemptWithTestCookie');
+        expect(step1HTML).toContain('/protocol/openid-connect/3p-cookies/step2.html');
+
+        // Step 2: Load step2.html (after redirect from step1)
+        const step2Request: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/3p-cookies/step2.html',
+          headers: {
+            host: 'localhost:5173',
+            cookie: 'KEYCLOAK_3P_COOKIE=supported; KEYCLOAK_3P_COOKIE_SAMESITE=supported'
+          }
+        };
+
+        const step2Response = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(step2Request, step2Response, vi.fn());
+
+        expect(step2Response.statusCode).toBe(200);
+
+        const step2HTML = (step2Response.end as any).mock.calls[0][0] as string;
+        expect(step2HTML).toContain('document.cookie.includes("KEYCLOAK_3P_COOKIE")');
+        expect(step2HTML).toContain('window.parent.postMessage');
+
+        // Step 3: Verify that the flow completes with postMessage to parent
+        expect(step2HTML).toContain('supported');
+        expect(step2HTML).toContain('unsupported');
+      });
+    });
+
+    describe('Keycloak-js checkLoginIframe Integration', () => {
+      it('should support Keycloak-js checkLoginIframe:true configuration', async () => {
+        // This simulates the Keycloak-js initialization with checkLoginIframe: true
+        // which loads the login-status-iframe.html in a hidden iframe
+
+        const iframeRequest: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/login-status-iframe.html',
+          headers: {
+            host: 'localhost:5173',
+            referer: 'http://localhost:5173/'
+          }
+        };
+
+        const iframeResponse = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(iframeRequest, iframeResponse, vi.fn());
+
+        expect(iframeResponse.statusCode).toBe(200);
+
+        const iframeHTML = (iframeResponse.end as any).mock.calls[0][0] as string;
+
+        // Verify the iframe contains the necessary message handling logic
+        expect(iframeHTML).toContain("window.addEventListener('message'");
+        expect(iframeHTML).toContain('sessionState');
+        expect(iframeHTML).toContain("postMessage('ready'");
+
+        // This iframe is used by Keycloak-js to monitor session status
+        // without requiring full page redirects
+      });
+
+      it('should handle session state check messages', async () => {
+        const iframeRequest: MockRequest = {
+          method: 'GET',
+          url: '/protocol/openid-connect/login-status-iframe.html',
+          headers: {
+            host: 'localhost:5173'
+          }
+        };
+
+        const iframeResponse = { ...mockResponse, setHeader: vi.fn(), end: vi.fn() };
+        await middleware(iframeRequest, iframeResponse, vi.fn());
+
+        const iframeHTML = (iframeResponse.end as any).mock.calls[0][0] as string;
+
+        // Verify that the iframe responds to session state checks
+        expect(iframeHTML).toContain('parts.length === 2');
+        expect(iframeHTML).toContain('const response = sessionState + \' unchanged\'');
+        expect(iframeHTML).toContain('event.source.postMessage(response, event.origin)');
+      });
+    });
+  });
 });
