@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <script type="module">
+      // This iframe is used to check session status without a full redirect
+      // It receives messages from the parent window and responds with session state
+
+      let originParam = null;
+
+      window.addEventListener('message', (event) => {
+        // Store origin for response
+        if (event.data && typeof event.data === 'string') {
+          const parts = event.data.split(' ');
+          if (parts.length === 2) {
+            originParam = parts[0];
+            const sessionState = parts[1];
+
+            // In a real implementation, we would check the session state here
+            // For development purposes, we'll respond with unchanged status
+            const response = sessionState + ' unchanged';
+            event.source.postMessage(response, event.origin);
+          }
+        }
+      });
+
+      // Notify parent that iframe is ready
+      if (window.parent !== window) {
+        window.parent.postMessage('ready', '*');
+      }
+    </script>
+  </body>
+</html>

@@ -3,11 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>test-client with keycloak-js</title>
+    <title>test-client with keycloak-js (checkLoginIframe: true)</title>
   </head>
   <body>
     <div>
       <h1>test-client with keycloak-js</h1>
+      <p style="color: #0066cc; font-weight: bold;">Testing with checkLoginIframe: true (default)</p>
       <div id="app">
         <button id="login-btn">Login</button>
         <button id="logout-btn" style="display: none">Logout</button>
@@ -17,8 +18,8 @@
     <br>
     <div>
       <a href="./">test-client (oidc-client-ts)</a> |
-      <a href="./index-kc-iframe.html">test-client (keycloak-js, checkLoginIframe: true)</a>
+      <a href="./index-kc.html">test-client (keycloak-js, checkLoginIframe: false)</a>
     </div>
-    <script type="module" src="/src/index-kc.ts"></script>
+    <script type="module" src="/src/index-kc-iframe.ts"></script>
   </body>
 </html>

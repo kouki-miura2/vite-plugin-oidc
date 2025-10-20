@@ -4,14 +4,15 @@
 
 import type { OIDCPluginConfig } from '../types/index.js';
 import { InMemoryStore } from '../storage/index.js';
-import { 
-    DiscoveryHandler, 
-    JWKSHandler, 
-    AuthorizationHandler, 
-    LoginUIHandler, 
+import {
+    DiscoveryHandler,
+    JWKSHandler,
+    AuthorizationHandler,
+    LoginUIHandler,
     TokenHandler,
     UserInfoHandler,
-    LogoutHandler
+    LogoutHandler,
+    ThirdPartyCookiesHandler
 } from '../handlers/index.js';
 import { TokenService } from '../services/TokenService.js';
 import { Logger, LogLevel } from '../utils/Logger.js';
@@ -51,6 +52,9 @@ function getExpectedMethods(endpoint: string): string[] {
         case '/protocol/openid-connect/userinfo':
         case '/logout':
         case '/protocol/openid-connect/logout':
+        case '/protocol/openid-connect/3p-cookies/step1.html':
+        case '/protocol/openid-connect/3p-cookies/step2.html':
+        case '/protocol/openid-connect/login-status-iframe.html':
             return ['GET'];
         case '/login':
             return ['GET', 'POST'];
@@ -97,6 +101,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
     const tokenHandler = new TokenHandler(store, config, config.users, config.clients, tokenService);
     const userInfoHandler = new UserInfoHandler(store, config, config.users, tokenService);
     const logoutHandler = new LogoutHandler(store, config);
+    const thirdPartyCookiesHandler = new ThirdPartyCookiesHandler(config);
 
     // Start cleanup interval for expired items
     const cleanupInterval = setInterval(() => {
@@ -235,6 +240,21 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 return;
             }
 
+            if (urlPath === '/protocol/openid-connect/3p-cookies/step1.html' && method === 'GET') {
+                await thirdPartyCookiesHandler.handleStep1(req, res);
+                return;
+            }
+
+            if (urlPath === '/protocol/openid-connect/3p-cookies/step2.html' && method === 'GET') {
+                await thirdPartyCookiesHandler.handleStep2(req, res);
+                return;
+            }
+
+            if (urlPath === '/protocol/openid-connect/login-status-iframe.html' && method === 'GET') {
+                await thirdPartyCookiesHandler.handleLoginStatusIframe(req, res);
+                return;
+            }
+
             // Handle known OIDC endpoints with wrong methods
             const knownEndpoints = [
                 '/.well-known/openid-configuration',
@@ -247,7 +267,10 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 '/userinfo',
                 '/protocol/openid-connect/userinfo',
                 '/logout',
-                '/protocol/openid-connect/logout'
+                '/protocol/openid-connect/logout',
+                '/protocol/openid-connect/3p-cookies/step1.html',
+                '/protocol/openid-connect/3p-cookies/step2.html',
+                '/protocol/openid-connect/login-status-iframe.html'
             ];
 
             if (knownEndpoints.includes(urlPath)) {

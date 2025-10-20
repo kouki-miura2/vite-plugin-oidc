@@ -259,12 +259,24 @@ When using a basePath containing `/realms/`, the plugin automatically uses Keycl
 | `/userinfo` | `/protocol/openid-connect/userinfo` |
 | `/logout` | `/protocol/openid-connect/logout` |
 
+**Additional Keycloak-js Support Endpoints:**
+
+These endpoints are used by the `keycloak-js` client library for browser compatibility checks and session management:
+
+| Endpoint | Path | Description |
+|----------|------|-------------|
+| **3P Cookies Check (Step 1)** | `/protocol/openid-connect/3p-cookies/step1.html` | Third-party cookie detection |
+| **3P Cookies Check (Step 2)** | `/protocol/openid-connect/3p-cookies/step2.html` | Third-party cookie verification |
+| **Login Status Iframe** | `/protocol/openid-connect/login-status-iframe.html` | Session status checking iframe |
+
 **Example URLs** (with `basePath: '/realms/myrealm'`):
 ```
 http://localhost:5173/realms/myrealm/.well-known/openid-configuration
 http://localhost:5173/realms/myrealm/protocol/openid-connect/auth
 http://localhost:5173/realms/myrealm/protocol/openid-connect/token
 http://localhost:5173/realms/myrealm/protocol/openid-connect/userinfo
+http://localhost:5173/realms/myrealm/protocol/openid-connect/3p-cookies/step1.html
+http://localhost:5173/realms/myrealm/protocol/openid-connect/login-status-iframe.html
 ```
 
 ### Using keycloak-js Client Library

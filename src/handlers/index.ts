@@ -9,6 +9,7 @@ export { LoginUIHandler } from './LoginUIHandler.js';
 export { TokenHandler } from './TokenHandler.js';
 export { UserInfoHandler } from './UserInfoHandler.js';
 export { LogoutHandler } from './LogoutHandler.js';
+export { ThirdPartyCookiesHandler } from './ThirdPartyCookiesHandler.js';
 
 // Re-export handler interfaces for convenience
 export type {
