@@ -1,6 +1,6 @@
 {
   "name": "test-client",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Sample OIDC client application for testing vite-plugin-oidc with Authorization Code + PKCE flow",
   "scripts": {
     "dev": "vite"
