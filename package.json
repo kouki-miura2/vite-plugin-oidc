@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-oidc",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "description": "A Vite plugin that provides OIDC server functionality for local development",
   "repository": {
