@@ -23,6 +23,7 @@ dist/
 .vscode/
 .idea/
 .kiro/
+.claude/
 *.swp
 *.swo
 
