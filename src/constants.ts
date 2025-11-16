@@ -9,16 +9,16 @@ export const ENDPOINTS = {
   TOKEN: '/token',
   USERINFO: '/userinfo',
   JWKS: '/jwks',
-  LOGIN: '/login'
-} as const;
+  LOGIN: '/login',
+} as const
 
 // Keycloak-compatible endpoint paths
 export const KEYCLOAK_ENDPOINTS = {
   AUTHORIZE: '/protocol/openid-connect/auth',
   TOKEN: '/protocol/openid-connect/token',
   USERINFO: '/protocol/openid-connect/userinfo',
-  LOGOUT: '/protocol/openid-connect/logout'
-} as const;
+  LOGOUT: '/protocol/openid-connect/logout',
+} as const
 
 // OIDC error codes
 export const ERROR_CODES = {
@@ -32,8 +32,8 @@ export const ERROR_CODES = {
   ACCESS_DENIED: 'access_denied',
   SERVER_ERROR: 'server_error',
   INVALID_TOKEN: 'invalid_token',
-  INSUFFICIENT_SCOPE: 'insufficient_scope'
-} as const;
+  INSUFFICIENT_SCOPE: 'insufficient_scope',
+} as const
 
 // Supported OIDC parameters
 export const SUPPORTED = {
@@ -42,13 +42,13 @@ export const SUPPORTED = {
   CODE_CHALLENGE_METHODS: ['S256'],
   SCOPES: ['openid', 'profile', 'email'],
   CLAIMS: ['sub', 'name', 'email', 'email_verified'],
-  TOKEN_ENDPOINT_AUTH_METHODS: ['none']
-} as const;
+  TOKEN_ENDPOINT_AUTH_METHODS: ['none'],
+} as const
 
 // Default token expiration times (in seconds)
 export const DEFAULT_EXPIRATION = {
   AUTHORIZATION_CODE: 600, // 10 minutes
   ACCESS_TOKEN: 3600, // 1 hour
   ID_TOKEN: 3600, // 1 hour
-  SESSION: 86400 // 24 hours
-} as const;
+  SESSION: 86400, // 24 hours
+} as const
