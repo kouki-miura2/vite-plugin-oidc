@@ -2,4 +2,4 @@
  * Storage module exports
  */
 
-export { InMemoryStore } from './InMemoryStore.js';
+export { InMemoryStore } from './InMemoryStore.js'

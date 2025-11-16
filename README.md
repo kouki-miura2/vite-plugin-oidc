@@ -230,7 +230,6 @@ loginUI: {
 ```typescript
 development: {
   enableLogging: true,    // Enable detailed logging
-  showWarnings: true     // Show development warnings
 }
 ```
 
@@ -403,7 +402,6 @@ export default defineConfig({
       },
       development: {
         enableLogging: true,
-        showWarnings: true,
       },
     }),
   ],
