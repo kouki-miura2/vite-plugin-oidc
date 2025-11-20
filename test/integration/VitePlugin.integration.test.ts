@@ -965,7 +965,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
         const html = (step2Response.end as any).mock.calls[0][0] as string
         expect(html).toContain('<!doctype html>')
-        expect(html).toContain('document.cookie.includes("KEYCLOAK_3P_COOKIE")')
+        expect(html).toContain("document.cookie.includes('KEYCLOAK_3P_COOKIE')")
         expect(html).toContain('window.parent.postMessage')
       })
 
@@ -1123,7 +1123,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
         const step2HTML = (step2Response.end as any).mock.calls[0][0] as string
         expect(step2HTML).toContain(
-          'document.cookie.includes("KEYCLOAK_3P_COOKIE")',
+          "document.cookie.includes('KEYCLOAK_3P_COOKIE')",
         )
         expect(step2HTML).toContain('window.parent.postMessage')
 
