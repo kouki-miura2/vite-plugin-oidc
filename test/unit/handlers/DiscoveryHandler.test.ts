@@ -80,7 +80,7 @@ describe('DiscoveryHandler', () => {
 
       const rsaHandler = new DiscoveryHandler(
         rsaConfig,
-        'http://localhost:5173/oidc'
+        'http://localhost:5173/oidc',
       )
       const document = rsaHandler.generateDiscoveryDocument()
 
@@ -95,16 +95,16 @@ describe('DiscoveryHandler', () => {
 
       const customHandler = new DiscoveryHandler(
         customConfig,
-        'http://localhost:5173/auth'
+        'http://localhost:5173/auth',
       )
       const document = customHandler.generateDiscoveryDocument()
 
       expect(document.authorization_endpoint).toBe(
-        'http://localhost:5173/auth/authorize'
+        'http://localhost:5173/auth/authorize',
       )
       expect(document.token_endpoint).toBe('http://localhost:5173/auth/token')
       expect(document.userinfo_endpoint).toBe(
-        'http://localhost:5173/auth/userinfo'
+        'http://localhost:5173/auth/userinfo',
       )
       expect(document.jwks_uri).toBe('http://localhost:5173/auth/jwks')
     })
@@ -115,7 +115,7 @@ describe('DiscoveryHandler', () => {
 
       expect(document.issuer).toBe('http://localhost:5173')
       expect(document.authorization_endpoint).toBe(
-        'http://localhost:5173/oidc/authorize'
+        'http://localhost:5173/oidc/authorize',
       )
     })
   })
@@ -126,15 +126,15 @@ describe('DiscoveryHandler', () => {
 
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        'public, max-age=3600'
+        'public, max-age=3600',
       )
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('"issuer": "http://localhost:5173/oidc"')
+        expect.stringContaining('"issuer": "http://localhost:5173/oidc"'),
       )
     })
 
@@ -150,7 +150,7 @@ describe('DiscoveryHandler', () => {
 
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.statusCode).toBe(500)
       expect(mockResponse.end).toHaveBeenCalledWith(
@@ -158,7 +158,7 @@ describe('DiscoveryHandler', () => {
           error: 'server_error',
           error_description:
             'Internal server error while generating discovery document',
-        })
+        }),
       )
       expect(consoleSpy).toHaveBeenCalled()
 
@@ -175,14 +175,14 @@ describe('DiscoveryHandler', () => {
 
       const loggingHandler = new DiscoveryHandler(
         loggingConfig,
-        'http://localhost:5173/oidc'
+        'http://localhost:5173/oidc',
       )
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
       await loggingHandler.handleDiscovery(mockRequest, mockResponse)
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        '[OIDC Discovery] Discovery document served'
+        '[OIDC Discovery] Discovery document served',
       )
 
       consoleSpy.mockRestore()

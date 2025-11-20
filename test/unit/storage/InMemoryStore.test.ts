@@ -301,7 +301,7 @@ describe('InMemoryStore', () => {
 
       // Retrieve all codes concurrently
       const retrievedCodes = authCodes.map((code) =>
-        store.getAuthorizationCode(code.code)
+        store.getAuthorizationCode(code.code),
       )
 
       // All should be retrieved successfully

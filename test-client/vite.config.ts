@@ -11,7 +11,7 @@ export default defineConfig({
           redirect_uris: [
             'http://localhost:5173/',
             'http://localhost:5173/index-kc.html',
-            'http://localhost:5173/index-kc-iframe.html'
+            'http://localhost:5173/index-kc-iframe.html',
           ],
           response_types: ['code'],
           grant_types: ['authorization_code'],

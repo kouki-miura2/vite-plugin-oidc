@@ -35,7 +35,7 @@ export class TokenService {
     jwtConfig: JWTConfig,
     issuer: string,
     tokenExpiration: TokenExpirationConfig = {},
-    basePath: string
+    basePath: string,
   ) {
     this.jwtUtil = new JWTUtil(jwtConfig)
     this.issuer = issuer
@@ -93,7 +93,7 @@ export class TokenService {
    * Generate only an access token (for client credentials flow, etc.)
    */
   generateAccessToken(
-    request: Omit<TokenGenerationRequest, 'nonce' | 'userProfile'>
+    request: Omit<TokenGenerationRequest, 'nonce' | 'userProfile'>,
   ): string {
     return this.jwtUtil.generateAccessToken({
       issuer: this.issuer,
@@ -158,7 +158,7 @@ export class TokenService {
    */
   validateIDToken(
     token: string,
-    expectedClientId?: string
+    expectedClientId?: string,
   ): { valid: boolean; payload?: any; error?: string } {
     const result = this.jwtUtil.validateToken(token)
 
@@ -190,7 +190,7 @@ export class TokenService {
    */
   private buildIDTokenClaims(
     userProfile?: UserProfile,
-    scope?: string
+    scope?: string,
   ): Record<string, any> {
     if (!userProfile) {
       return {}

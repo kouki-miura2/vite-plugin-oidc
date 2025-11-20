@@ -26,7 +26,7 @@ export class JWTUtil {
 
     if (algorithm === 'RS256' && (!config.privateKey || !config.publicKey)) {
       throw new Error(
-        'Private and public keys are required for RS256 algorithm'
+        'Private and public keys are required for RS256 algorithm',
       )
     }
 

@@ -32,7 +32,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
     store: InMemoryStore,
     config: OIDCPluginConfig,
     users: UserAccount[],
-    clients: ClientConfig[]
+    clients: ClientConfig[],
   ) {
     this.store = store
     this.config = config
@@ -72,7 +72,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
           validation.error!,
           params.redirect_uri,
           params.state,
-          params.response_mode
+          params.response_mode,
         )
         return
       }
@@ -99,7 +99,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
         const authCode = this.generateAuthorizationCode(
           params.client_id,
           session.userId,
-          params.code_challenge
+          params.code_challenge,
         )
 
         // Store the authorization code
@@ -134,30 +134,30 @@ export class AuthorizationHandler implements IAuthorizationHandler {
           params.redirect_uri,
           authCode,
           params.state,
-          params.response_mode
+          params.response_mode,
         )
       } else {
         // User not authenticated
         if (isSilentCheck) {
           // For silent SSO checks, return an error instead of redirecting
           console.log(
-            'Authorization - Silent SSO check failed, returning error'
+            'Authorization - Silent SSO check failed, returning error',
           )
           const oidcError = ValidationUtil.createErrorResponse(
             'login_required',
-            'User authentication is required'
+            'User authentication is required',
           )
           this.sendErrorResponse(
             res,
             oidcError,
             params.redirect_uri,
             params.state,
-            params.response_mode
+            params.response_mode,
           )
         } else {
           // For normal requests, redirect to login page
           console.log(
-            'Authorization - No valid session found, redirecting to login'
+            'Authorization - No valid session found, redirecting to login',
           )
           logger.debug('User not authenticated, redirecting to login', {
             endpoint: '/authorize',
@@ -181,7 +181,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
           errorMessage:
             error instanceof Error ? error.message : 'Unknown error',
         },
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       )
 
       this.sendErrorResponse(res, oidcError)
@@ -195,7 +195,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
   generateAuthorizationCode(
     clientId: string,
     userId: string,
-    codeChallenge: string
+    codeChallenge: string,
   ): string {
     // Generate a secure random authorization code
     const timestamp = Date.now().toString()
@@ -273,7 +273,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
   private redirectToLogin(res: Response, originalUrl: string): void {
     const basePath = this.config.basePath || '/oidc'
     const loginUrl = `${basePath}/login?return_to=${encodeURIComponent(
-      originalUrl
+      originalUrl,
     )}`
 
     res.statusCode = 302
@@ -286,7 +286,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
     redirectUri: string,
     code: string,
     state?: string,
-    responseMode?: string
+    responseMode?: string,
   ): void {
     const url = new URL(redirectUri)
 
@@ -319,7 +319,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
     error: OIDCError,
     redirectUri?: string,
     state?: string,
-    responseMode?: string
+    responseMode?: string,
   ): void {
     const statusCode = ValidationUtil.getErrorStatusCode(error.error)
 
@@ -332,7 +332,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
         let fragment = `error=${encodeURIComponent(error.error)}`
         if (error.error_description) {
           fragment += `&error_description=${encodeURIComponent(
-            error.error_description
+            error.error_description,
           )}`
         }
         if (error.error_uri) {

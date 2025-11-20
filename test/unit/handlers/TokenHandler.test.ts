@@ -56,19 +56,19 @@ describe('TokenHandler', () => {
   beforeEach(() => {
     store = new InMemoryStore()
     const tokenExpiration: any = {} // provide defaults for tests
-    const tokenOptions: any = {}
+    const basePath = '/oidc'
     tokenService = new TokenService(
       jwtConfig,
       testConfig.issuer!,
       tokenExpiration,
-      tokenOptions
+      basePath,
     )
     tokenHandler = new TokenHandler(
       store,
       testConfig,
       testUsers,
       testClients,
-      tokenService
+      tokenService,
     )
 
     // Mock response object
@@ -286,7 +286,7 @@ describe('TokenHandler', () => {
       const codeVerifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
       const result = tokenHandler.exchangeCodeForTokens(
         'test_auth_code',
-        codeVerifier
+        codeVerifier,
       )
 
       expect(result.access_token).toBeDefined()
@@ -322,7 +322,7 @@ describe('TokenHandler', () => {
       expect(() => {
         tokenHandler.exchangeCodeForTokens(
           'test_auth_code',
-          invalidCodeVerifier
+          invalidCodeVerifier,
         )
       }).toThrow('Invalid code verifier')
     })
@@ -346,7 +346,7 @@ describe('TokenHandler', () => {
 
       const result = tokenHandler.exchangeCodeForTokens(
         'pkce_test_code',
-        codeVerifier
+        codeVerifier,
       )
 
       expect(result.access_token).toBeDefined()
@@ -439,7 +439,7 @@ describe('TokenHandler', () => {
       const codeVerifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
       const result = tokenHandler.exchangeCodeForTokens(
         'store_token_test',
-        codeVerifier
+        codeVerifier,
       )
 
       // Verify the access token is stored
@@ -470,7 +470,7 @@ describe('TokenHandler', () => {
       const codeVerifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
       const result = tokenHandler.exchangeCodeForTokens(
         'scope_nonce_test',
-        codeVerifier
+        codeVerifier,
       )
 
       expect(result.access_token).toBeDefined()
@@ -495,10 +495,10 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(400)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('invalid_request')
+        expect.stringContaining('invalid_request'),
       )
     })
 
@@ -527,16 +527,16 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        'no-store'
+        'no-store',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.access_token).toBeDefined()
       expect(responseBody.token_type).toBe('Bearer')
@@ -556,15 +556,15 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(400)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.error).toBe('invalid_grant')
       expect(responseBody.error_description).toContain(
-        'Invalid authorization code'
+        'Invalid authorization code',
       )
     })
 
@@ -594,15 +594,15 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(400)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.error).toBe('invalid_grant')
       expect(responseBody.error_description).toContain(
-        'Invalid authorization code or code verifier'
+        'Invalid authorization code or code verifier',
       )
     })
 
@@ -618,11 +618,11 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(401)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.error).toBe('invalid_client')
     })
@@ -639,11 +639,11 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(400)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.error).toBe('unsupported_grant_type')
     })
@@ -660,11 +660,11 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(400)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.error).toBe('invalid_request')
     })
@@ -681,11 +681,11 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(400)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.error).toBe('invalid_request')
       expect(responseBody.error_description).toContain('redirect_uri')
@@ -709,11 +709,11 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(500)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.error).toBe('server_error')
 
@@ -752,11 +752,11 @@ describe('TokenHandler', () => {
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0]
+        (mockResponse.end as any).mock.calls[0][0],
       )
       expect(responseBody.access_token).toBeDefined()
       expect(responseBody.token_type).toBe('Bearer')

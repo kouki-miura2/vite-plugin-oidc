@@ -39,7 +39,7 @@ export interface AuthorizationHandler {
   generateAuthorizationCode(
     clientId: string,
     userId: string,
-    codeChallenge: string
+    codeChallenge: string,
   ): string
 }
 

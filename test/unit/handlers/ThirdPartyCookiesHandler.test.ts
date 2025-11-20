@@ -50,11 +50,11 @@ describe('ThirdPartyCookiesHandler', () => {
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        'no-store, no-cache, must-revalidate'
+        'no-store, no-cache, must-revalidate',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
       expect(mockResponse.end).toHaveBeenCalled()
@@ -69,7 +69,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       const html = (mockResponse.end as any).mock.calls[0][0] as string
       expect(html).toContain(
-        'http://localhost:5173/oidc/protocol/openid-connect/3p-cookies/step2.html'
+        'http://localhost:5173/oidc/protocol/openid-connect/3p-cookies/step2.html',
       )
     })
 
@@ -84,7 +84,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       const html = (mockResponse.end as any).mock.calls[0][0] as string
       expect(html).toContain(
-        'http://localhost:5173/auth/protocol/openid-connect/3p-cookies/step2.html'
+        'http://localhost:5173/auth/protocol/openid-connect/3p-cookies/step2.html',
       )
     })
 
@@ -99,7 +99,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       const html = (mockResponse.end as any).mock.calls[0][0] as string
       expect(html).toContain(
-        'http://localhost:5173/protocol/openid-connect/3p-cookies/step2.html'
+        'http://localhost:5173/protocol/openid-connect/3p-cookies/step2.html',
       )
     })
 
@@ -162,7 +162,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '[3P Cookies] Step1 served',
-        expect.any(Object)
+        expect.any(Object),
       )
 
       consoleSpy.mockRestore()
@@ -187,7 +187,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '[3P Cookies] Error serving step1.html:',
-        expect.any(Error)
+        expect.any(Error),
       )
       expect(mockResponse.statusCode).toBe(500)
 
@@ -202,11 +202,11 @@ describe('ThirdPartyCookiesHandler', () => {
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        'no-store, no-cache, must-revalidate'
+        'no-store, no-cache, must-revalidate',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
       expect(mockResponse.end).toHaveBeenCalled()
@@ -266,7 +266,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '[3P Cookies] Error serving step2.html:',
-        expect.any(Error)
+        expect.any(Error),
       )
       expect(mockResponse.statusCode).toBe(500)
 
@@ -281,11 +281,11 @@ describe('ThirdPartyCookiesHandler', () => {
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        'no-store, no-cache, must-revalidate'
+        'no-store, no-cache, must-revalidate',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
       expect(mockResponse.end).toHaveBeenCalled()
@@ -346,7 +346,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '[Login Status Iframe] Error serving login-status-iframe.html:',
-        expect.any(Error)
+        expect.any(Error),
       )
       expect(mockResponse.statusCode).toBe(500)
 

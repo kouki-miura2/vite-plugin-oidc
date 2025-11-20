@@ -16,17 +16,17 @@ const __dirname = path.dirname(__filename)
 // Load HTML templates at build time
 const step1HTML = fs.readFileSync(
   path.join(__dirname, '../assets/templates/3p-cookies-step1.html'),
-  'utf-8'
+  'utf-8',
 )
 
 const step2HTML = fs.readFileSync(
   path.join(__dirname, '../assets/templates/3p-cookies-step2.html'),
-  'utf-8'
+  'utf-8',
 )
 
 const loginStatusIframeHTML = fs.readFileSync(
   path.join(__dirname, '../assets/templates/login-status-iframe.html'),
-  'utf-8'
+  'utf-8',
 )
 
 export class ThirdPartyCookiesHandler {
@@ -138,7 +138,7 @@ export class ThirdPartyCookiesHandler {
     } catch (error) {
       console.error(
         '[Login Status Iframe] Error serving login-status-iframe.html:',
-        error
+        error,
       )
 
       res.statusCode = 500

@@ -16,7 +16,7 @@ export class PKCEUtil {
   static verifyCodeChallenge(
     codeVerifier: string,
     codeChallenge: string,
-    method: string = 'S256'
+    method: string = 'S256',
   ): boolean {
     if (method !== 'S256') {
       return false
@@ -44,7 +44,7 @@ export class PKCEUtil {
   static generateCodeVerifier(length: number = 128): string {
     if (length < 43 || length > 128) {
       throw new Error(
-        'Code verifier length must be between 43 and 128 characters'
+        'Code verifier length must be between 43 and 128 characters',
       )
     }
 
@@ -60,7 +60,7 @@ export class PKCEUtil {
    */
   static generateCodeChallenge(
     codeVerifier: string,
-    method: string = 'S256'
+    method: string = 'S256',
   ): string {
     if (method !== 'S256') {
       throw new Error('Only S256 code challenge method is supported')

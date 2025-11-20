@@ -92,7 +92,7 @@ describe('UserInfoHandler', () => {
       mockStore,
       config,
       testUsers,
-      mockTokenService
+      mockTokenService,
     )
   })
 
@@ -108,13 +108,13 @@ describe('UserInfoHandler', () => {
       expect(mockResponse.statusCode).toBe(405)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.end).toHaveBeenCalledWith(
         JSON.stringify({
           error: 'invalid_request',
           error_description: 'UserInfo endpoint only accepts GET requests',
-        })
+        }),
       )
     })
 
@@ -129,13 +129,13 @@ describe('UserInfoHandler', () => {
       expect(mockResponse.statusCode).toBe(401)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'WWW-Authenticate',
-        'Bearer'
+        'Bearer',
       )
       expect(mockResponse.end).toHaveBeenCalledWith(
         JSON.stringify({
           error: 'invalid_token',
           error_description: 'Missing Authorization header',
-        })
+        }),
       )
     })
 
@@ -155,7 +155,7 @@ describe('UserInfoHandler', () => {
           error: 'invalid_token',
           error_description:
             'Invalid Authorization header format. Expected: Bearer <token>',
-        })
+        }),
       )
     })
 
@@ -177,7 +177,7 @@ describe('UserInfoHandler', () => {
         JSON.stringify({
           error: 'invalid_token',
           error_description: 'Token not found in store',
-        })
+        }),
       )
     })
 
@@ -207,7 +207,7 @@ describe('UserInfoHandler', () => {
         JSON.stringify({
           error: 'invalid_token',
           error_description: 'Token has expired',
-        })
+        }),
       )
     })
 
@@ -238,11 +238,11 @@ describe('UserInfoHandler', () => {
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        'no-store'
+        'no-store',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
 
@@ -259,7 +259,7 @@ describe('UserInfoHandler', () => {
       }
 
       expect(mockResponse.end).toHaveBeenCalledWith(
-        JSON.stringify(expectedUserInfo)
+        JSON.stringify(expectedUserInfo),
       )
     })
 
@@ -301,7 +301,7 @@ describe('UserInfoHandler', () => {
       }
 
       expect(mockResponse.end).toHaveBeenCalledWith(
-        JSON.stringify(expectedUserInfo)
+        JSON.stringify(expectedUserInfo),
       )
     })
 
@@ -331,7 +331,7 @@ describe('UserInfoHandler', () => {
 
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.end).toHaveBeenCalledWith(
-        JSON.stringify({ sub: '1' })
+        JSON.stringify({ sub: '1' }),
       )
     })
 
@@ -364,7 +364,7 @@ describe('UserInfoHandler', () => {
         JSON.stringify({
           error: 'invalid_token',
           error_description: 'User not found',
-        })
+        }),
       )
     })
 
@@ -404,7 +404,7 @@ describe('UserInfoHandler', () => {
           email: 'test@example.com',
           email_verified: true,
           role: 'user',
-        })
+        }),
       )
     })
 
@@ -464,7 +464,7 @@ describe('UserInfoHandler', () => {
         JSON.stringify({
           error: 'invalid_token',
           error_description: 'Invalid token signature or claims',
-        })
+        }),
       )
     })
 
@@ -513,7 +513,7 @@ describe('UserInfoHandler', () => {
         JSON.stringify({
           error: 'server_error',
           error_description: 'Internal server error',
-        })
+        }),
       )
 
       // Restore original JSON.stringify
@@ -554,7 +554,7 @@ describe('UserInfoHandler', () => {
       }
 
       expect(mockResponse.end).toHaveBeenCalledWith(
-        JSON.stringify(expectedUserInfo)
+        JSON.stringify(expectedUserInfo),
       )
     })
   })

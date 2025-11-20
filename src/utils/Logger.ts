@@ -70,7 +70,7 @@ export class Logger {
   error(
     message: string,
     context?: LogContext,
-    error?: Error | OIDCError
+    error?: Error | OIDCError,
   ): void {
     this.log(LogLevel.ERROR, message, context, error)
   }
@@ -147,7 +147,7 @@ export class Logger {
       clientId?: string
       redirectUri?: string
       requestId?: string
-    }
+    },
   ): void {
     this.error(
       'Authorization request failed',
@@ -159,7 +159,7 @@ export class Logger {
         errorCode: error.error,
         errorDescription: error.error_description,
       },
-      error
+      error,
     )
   }
 
@@ -210,7 +210,7 @@ export class Logger {
       clientId?: string
       grantType?: string
       requestId?: string
-    }
+    },
   ): void {
     this.error(
       'Token request failed',
@@ -222,7 +222,7 @@ export class Logger {
         errorCode: error.error,
         errorDescription: error.error_description,
       },
-      error
+      error,
     )
   }
 
@@ -269,7 +269,7 @@ export class Logger {
       userId?: string
       clientId?: string
       requestId?: string
-    }
+    },
   ): void {
     this.error(
       'UserInfo request failed',
@@ -281,7 +281,7 @@ export class Logger {
         errorCode: error.error,
         errorDescription: error.error_description,
       },
-      error
+      error,
     )
   }
 
@@ -322,7 +322,7 @@ export class Logger {
       {
         environment: 'production',
         recommendation: 'Use a proper OIDC provider in production',
-      }
+      },
     )
   }
 
@@ -335,7 +335,7 @@ export class Logger {
       parameter?: string
       expectedFormat?: string
       suggestion?: string
-    }
+    },
   ): void {
     const message = `Parameter validation failed: ${error.error_description}`
     const enhancedContext = {
@@ -381,7 +381,7 @@ export class Logger {
     level: LogLevel,
     message: string,
     context?: LogContext,
-    error?: Error | OIDCError
+    error?: Error | OIDCError,
   ): void {
     if (level > this.logLevel) {
       return

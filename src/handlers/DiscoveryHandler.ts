@@ -48,7 +48,7 @@ export class DiscoveryHandler implements IDiscoveryHandler {
           error: 'server_error',
           error_description:
             'Internal server error while generating discovery document',
-        })
+        }),
       )
     }
   }

@@ -24,13 +24,13 @@ describe('JWTUtil', () => {
 
     it('should throw error for HS256 without secret', () => {
       expect(() => new JWTUtil({ algorithm: 'HS256' })).toThrow(
-        'JWT secret is required for HS256 algorithm'
+        'JWT secret is required for HS256 algorithm',
       )
     })
 
     it('should throw error for RS256 without keys', () => {
       expect(() => new JWTUtil({ algorithm: 'RS256' })).toThrow(
-        'Private and public keys are required for RS256 algorithm'
+        'Private and public keys are required for RS256 algorithm',
       )
     })
 
@@ -356,7 +356,7 @@ describe('JWTUtil', () => {
           aud: 'evil_client',
           sub: 'hacker',
           exp: Math.floor(Date.now() / 1000) + 3600,
-        })
+        }),
       ).toString('base64url')
 
       const tamperedToken = parts[0] + '.' + tamperedPayload + '.' + parts[2]

@@ -68,22 +68,22 @@ export default function oidcPlugin(userConfig: OIDCPluginConfig = {}): Plugin {
 
       if (isProduction) {
         console.error(
-          '⚠️  [vite-plugin-oidc] WARNING: This plugin is running in production mode!'
+          '⚠️  [vite-plugin-oidc] WARNING: This plugin is running in production mode!',
         )
         console.error(
-          '⚠️  [vite-plugin-oidc] This plugin is intended for development only and should NOT be used in production.'
+          '⚠️  [vite-plugin-oidc] This plugin is intended for development only and should NOT be used in production.',
         )
         console.error(
-          '⚠️  [vite-plugin-oidc] Please remove this plugin from your production build configuration.'
+          '⚠️  [vite-plugin-oidc] Please remove this plugin from your production build configuration.',
         )
         console.error(
-          '⚠️  [vite-plugin-oidc] Using mock OIDC in production poses serious security risks.'
+          '⚠️  [vite-plugin-oidc] Using mock OIDC in production poses serious security risks.',
         )
       }
 
       if (config.development?.enableLogging) {
         console.log(
-          `[vite-plugin-oidc] Initializing OIDC endpoints at ${config.basePath}`
+          `[vite-plugin-oidc] Initializing OIDC endpoints at ${config.basePath}`,
         )
       }
 
@@ -104,7 +104,7 @@ export default function oidcPlugin(userConfig: OIDCPluginConfig = {}): Plugin {
       if (config.development?.enableLogging) {
         console.log(`[vite-plugin-oidc] OIDC endpoints registered:`)
         console.log(
-          `  - Discovery: ${config.issuer}/.well-known/openid-configuration`
+          `  - Discovery: ${config.issuer}/.well-known/openid-configuration`,
         )
         console.log(`  - Authorization: ${config.issuer}/authorize`)
         console.log(`  - Token: ${config.issuer}/token`)
@@ -118,7 +118,7 @@ export default function oidcPlugin(userConfig: OIDCPluginConfig = {}): Plugin {
       try {
         if (config.development?.enableLogging) {
           console.log(
-            '[vite-plugin-oidc] Plugin shutting down, cleaning up resources...'
+            '[vite-plugin-oidc] Plugin shutting down, cleaning up resources...',
           )
         }
 
@@ -128,7 +128,7 @@ export default function oidcPlugin(userConfig: OIDCPluginConfig = {}): Plugin {
 
         if (config.development?.enableLogging) {
           console.log(
-            '[vite-plugin-oidc] Plugin cleanup completed successfully'
+            '[vite-plugin-oidc] Plugin cleanup completed successfully',
           )
         }
       } catch (error) {

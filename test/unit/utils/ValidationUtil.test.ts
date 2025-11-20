@@ -38,7 +38,7 @@ describe('ValidationUtil', () => {
     it('should validate valid authorization request', () => {
       const result = ValidationUtil.validateAuthorizationRequest(
         validAuthParams,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(true)
       expect(result.error).toBeUndefined()
@@ -48,7 +48,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, client_id: '' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_request')
@@ -59,7 +59,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, redirect_uri: '' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_request')
@@ -70,7 +70,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, response_type: '' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_request')
@@ -81,7 +81,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, code_challenge: '' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_request')
@@ -92,7 +92,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, code_challenge_method: '' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_request')
@@ -103,7 +103,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, response_type: 'token' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('unsupported_response_type')
@@ -113,7 +113,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, code_challenge_method: 'plain' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_request')
@@ -124,7 +124,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, client_id: 'invalid_client' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('unauthorized_client')
@@ -137,7 +137,7 @@ describe('ValidationUtil', () => {
       }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_request')
@@ -148,7 +148,7 @@ describe('ValidationUtil', () => {
       const params = { ...validAuthParams, scope: 'openid invalid_scope' }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(false)
       expect(result.error?.error).toBe('invalid_scope')
@@ -161,7 +161,7 @@ describe('ValidationUtil', () => {
       }
       const result = ValidationUtil.validateAuthorizationRequest(
         params,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(true)
     })
@@ -179,7 +179,7 @@ describe('ValidationUtil', () => {
     it('should validate valid token request', () => {
       const result = ValidationUtil.validateTokenRequest(
         validTokenParams,
-        mockClients
+        mockClients,
       )
       expect(result.isValid).toBe(true)
       expect(result.error).toBeUndefined()
@@ -262,30 +262,30 @@ describe('ValidationUtil', () => {
   describe('isValidRedirectUri', () => {
     it('should accept valid HTTPS URI', () => {
       expect(
-        ValidationUtil.isValidRedirectUri('https://example.com/callback')
+        ValidationUtil.isValidRedirectUri('https://example.com/callback'),
       ).toBe(true)
     })
 
     it('should accept valid localhost HTTP URI', () => {
       expect(
-        ValidationUtil.isValidRedirectUri('http://localhost:3000/callback')
+        ValidationUtil.isValidRedirectUri('http://localhost:3000/callback'),
       ).toBe(true)
       expect(
-        ValidationUtil.isValidRedirectUri('http://127.0.0.1:3000/callback')
+        ValidationUtil.isValidRedirectUri('http://127.0.0.1:3000/callback'),
       ).toBe(true)
     })
 
     it('should reject HTTP URI for non-localhost', () => {
       expect(
-        ValidationUtil.isValidRedirectUri('http://example.com/callback')
+        ValidationUtil.isValidRedirectUri('http://example.com/callback'),
       ).toBe(false)
     })
 
     it('should reject URI with fragment', () => {
       expect(
         ValidationUtil.isValidRedirectUri(
-          'https://example.com/callback#fragment'
-        )
+          'https://example.com/callback#fragment',
+        ),
       ).toBe(false)
     })
 
@@ -295,7 +295,7 @@ describe('ValidationUtil', () => {
 
     it('should reject non-HTTP(S) schemes', () => {
       expect(
-        ValidationUtil.isValidRedirectUri('ftp://example.com/callback')
+        ValidationUtil.isValidRedirectUri('ftp://example.com/callback'),
       ).toBe(false)
     })
   })
@@ -304,8 +304,8 @@ describe('ValidationUtil', () => {
     it('should accept valid code challenge', () => {
       expect(
         ValidationUtil.isValidCodeChallenge(
-          'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
-        )
+          'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
+        ),
       ).toBe(true)
     })
 
@@ -325,8 +325,8 @@ describe('ValidationUtil', () => {
     it('should reject invalid characters', () => {
       expect(
         ValidationUtil.isValidCodeChallenge(
-          'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk+'
-        )
+          'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk+',
+        ),
       ).toBe(false)
     })
   })
@@ -358,7 +358,7 @@ describe('ValidationUtil', () => {
       expect(ValidationUtil.getErrorStatusCode('invalid_request')).toBe(400)
       expect(ValidationUtil.getErrorStatusCode('server_error')).toBe(500)
       expect(ValidationUtil.getErrorStatusCode('temporarily_unavailable')).toBe(
-        503
+        503,
       )
       expect(ValidationUtil.getErrorStatusCode('unknown_error')).toBe(400)
     })
@@ -370,7 +370,7 @@ describe('ValidationUtil', () => {
         'invalid_request',
         'Missing parameter',
         'https://example.com/error',
-        'xyz'
+        'xyz',
       )
 
       expect(error.error).toBe('invalid_request')

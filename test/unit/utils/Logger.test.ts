@@ -281,7 +281,7 @@ describe('Logger', () => {
       testLogger.info('Test message')
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[INFO] [vite-plugin-oidc] Test message')
+        expect.stringContaining('[INFO] [vite-plugin-oidc] Test message'),
       )
 
       consoleSpy.mockRestore()

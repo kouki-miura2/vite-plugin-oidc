@@ -34,7 +34,7 @@ describe('TokenService', () => {
           accessToken: 7200,
           idToken: 1800,
         },
-        ''
+        '',
       )
       const expiration = customService.getTokenExpiration()
       expect(expiration.accessToken).toBe(7200)
@@ -174,7 +174,7 @@ describe('TokenService', () => {
         testConfig,
         'http://wrong-issuer.com',
         {},
-        ''
+        '',
       )
       const token = wrongService.generateAccessToken({
         clientId: 'test_client',
@@ -210,7 +210,7 @@ describe('TokenService', () => {
 
       // Decode the ID token to check claims
       const decoded = JSON.parse(
-        Buffer.from(response.id_token!.split('.')[1], 'base64').toString()
+        Buffer.from(response.id_token!.split('.')[1], 'base64').toString(),
       )
 
       expect(decoded.name).toBe('Test User')
@@ -230,7 +230,7 @@ describe('TokenService', () => {
       })
 
       const decoded = JSON.parse(
-        Buffer.from(response.id_token!.split('.')[1], 'base64').toString()
+        Buffer.from(response.id_token!.split('.')[1], 'base64').toString(),
       )
 
       expect(decoded.email).toBe('test@example.com')
@@ -247,7 +247,7 @@ describe('TokenService', () => {
       })
 
       const decoded = JSON.parse(
-        Buffer.from(response.id_token!.split('.')[1], 'base64').toString()
+        Buffer.from(response.id_token!.split('.')[1], 'base64').toString(),
       )
 
       expect(decoded.custom_claim).toBe('custom_value')
@@ -263,7 +263,7 @@ describe('TokenService', () => {
       expect(response.id_token).toBeTruthy()
 
       const decoded = JSON.parse(
-        Buffer.from(response.id_token!.split('.')[1], 'base64').toString()
+        Buffer.from(response.id_token!.split('.')[1], 'base64').toString(),
       )
       expect(decoded.sub).toBe('user123')
       expect(decoded.name).toBeUndefined()

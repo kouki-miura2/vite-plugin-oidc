@@ -46,7 +46,7 @@ export class JWKSHandler implements IJWKSHandler {
           error: 'server_error',
           error_description:
             'Internal server error while generating JWKS document',
-        })
+        }),
       )
     }
   }
@@ -67,6 +67,10 @@ export class JWKSHandler implements IJWKSHandler {
       // For HS256, we create a symmetric key JWK
       // Note: In production, symmetric keys should not be exposed in JWKS
       // This is for development/testing purposes only
+      console.warn(
+        '[OIDC JWKS] Warning: Exposing symmetric key in JWKS is for development only!',
+      )
+
       const secret =
         this.config.jwt?.secret || 'dev-secret-key-change-in-production'
 
@@ -125,7 +129,7 @@ export class JWKSHandler implements IJWKSHandler {
       throw new Error(
         `Failed to extract RSA public key components: ${
           error instanceof Error ? error.message : 'Unknown error'
-        }`
+        }`,
       )
     }
   }

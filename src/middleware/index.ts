@@ -90,7 +90,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
     config.jwt,
     config.issuer,
     config.tokenExpiration,
-    config.basePath
+    config.basePath,
   )
 
   // Initialize handlers with correct constructor signatures
@@ -100,7 +100,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
     store,
     config,
     config.users,
-    config.clients
+    config.clients,
   )
   const loginUIHandler = new LoginUIHandler(store, config, config.users)
   const tokenHandler = new TokenHandler(
@@ -108,13 +108,13 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
     config,
     config.users,
     config.clients,
-    tokenService
+    tokenService,
   )
   const userInfoHandler = new UserInfoHandler(
     store,
     config,
     config.users,
-    tokenService
+    tokenService,
   )
   const logoutHandler = new LogoutHandler(store, config)
   const thirdPartyCookiesHandler = new ThirdPartyCookiesHandler(config)
@@ -130,7 +130,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
           errorMessage: error instanceof Error ? error.message : String(error),
           timestamp: Date.now(),
         },
-        error instanceof Error ? error : new Error(String(error))
+        error instanceof Error ? error : new Error(String(error)),
       )
     }
   }, 60000) // Cleanup every minute
@@ -153,7 +153,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
           JSON.stringify({
             error: 'invalid_request',
             error_description: 'Missing URL in request',
-          })
+          }),
         )
         return
       }
@@ -175,7 +175,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
           JSON.stringify({
             error: 'invalid_request',
             error_description: 'Invalid URL path',
-          })
+          }),
         )
         return
       }
@@ -224,7 +224,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 errorMessage: error.message,
                 timestamp: Date.now(),
               },
-              error
+              error,
             )
             res.statusCode = 500
             res.setHeader('Content-Type', 'text/plain')
@@ -259,7 +259,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
                 errorMessage: error.message,
                 timestamp: Date.now(),
               },
-              error
+              error,
             )
             res.statusCode = 500
             res.setHeader('Content-Type', 'text/plain')
@@ -350,9 +350,9 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
           JSON.stringify({
             error: 'invalid_request',
             error_description: `Method ${method} not allowed for ${urlPath}. Expected: ${getExpectedMethods(
-              urlPath
+              urlPath,
             ).join(', ')}`,
-          })
+          }),
         )
         return
       }
@@ -384,7 +384,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
           errorCount,
           timestamp: now,
         },
-        error instanceof Error ? error : new Error(String(error))
+        error instanceof Error ? error : new Error(String(error)),
       )
 
       // Circuit breaker: if too many errors, temporarily disable
@@ -442,7 +442,7 @@ export function createOIDCMiddleware(config: Required<OIDCPluginConfig>) {
           errorMessage: error instanceof Error ? error.message : String(error),
           timestamp: Date.now(),
         },
-        error instanceof Error ? error : new Error(String(error))
+        error instanceof Error ? error : new Error(String(error)),
       )
     }
   }

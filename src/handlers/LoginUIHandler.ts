@@ -21,7 +21,7 @@ const __dirname = path.dirname(__filename)
 // Load HTML templates at build time
 const loginHTML = fs.readFileSync(
   path.join(__dirname, '../assets/templates/login.html'),
-  'utf-8'
+  'utf-8',
 )
 
 export class LoginUIHandler implements ILoginUIHandler {
@@ -32,7 +32,7 @@ export class LoginUIHandler implements ILoginUIHandler {
   constructor(
     store: InMemoryStore,
     config: OIDCPluginConfig,
-    users: UserAccount[]
+    users: UserAccount[],
   ) {
     this.store = store
     this.config = config
@@ -90,7 +90,7 @@ export class LoginUIHandler implements ILoginUIHandler {
         // Authentication failed, redirect back to login with error
         const basePath = this.config.basePath || '/oidc'
         let errorUrl = `${basePath}/login?error=${encodeURIComponent(
-          'Invalid username or password'
+          'Invalid username or password',
         )}`
         if (return_to) {
           errorUrl += `&return_to=${encodeURIComponent(return_to)}`
@@ -135,7 +135,7 @@ export class LoginUIHandler implements ILoginUIHandler {
         console.log('Login - Parsed URL pathname:', returnUrl.pathname)
         console.log(
           'Login - Parsed URL search params:',
-          returnUrl.searchParams.toString()
+          returnUrl.searchParams.toString(),
         )
 
         const clientId = returnUrl.searchParams.get('client_id')
@@ -143,7 +143,7 @@ export class LoginUIHandler implements ILoginUIHandler {
         const state = returnUrl.searchParams.get('state') || undefined
         const codeChallenge = returnUrl.searchParams.get('code_challenge')
         const codeChallengeMethod = returnUrl.searchParams.get(
-          'code_challenge_method'
+          'code_challenge_method',
         )
         const scope = returnUrl.searchParams.get('scope') || undefined
         const responseMode =
@@ -187,7 +187,7 @@ export class LoginUIHandler implements ILoginUIHandler {
           !isTestEnvironment
         ) {
           console.log(
-            'Login - All required parameters present, generating authorization code directly'
+            'Login - All required parameters present, generating authorization code directly',
           )
           // Generate authorization code
           const authCode = this.generateAuthorizationCode()
@@ -226,7 +226,7 @@ export class LoginUIHandler implements ILoginUIHandler {
 
           console.log(
             'Login - Redirecting directly to client:',
-            clientRedirectUrl.toString()
+            clientRedirectUrl.toString(),
           )
           res.statusCode = 302
           res.setHeader('Location', clientRedirectUrl.toString())
@@ -234,7 +234,7 @@ export class LoginUIHandler implements ILoginUIHandler {
         } else {
           // Fallback: redirect back to authorization endpoint (original behavior)
           console.log(
-            'Login - Missing required parameters, falling back to authorization endpoint redirect'
+            'Login - Missing required parameters, falling back to authorization endpoint redirect',
           )
           console.log('Login - Missing parameters check:', {
             hasClientId: !!clientId,
@@ -263,7 +263,7 @@ export class LoginUIHandler implements ILoginUIHandler {
   generateLoginHTML(
     users: UserAccount[],
     error?: string,
-    returnTo?: string
+    returnTo?: string,
   ): string {
     const basePath = this.config.basePath || '/oidc'
 
@@ -292,11 +292,11 @@ export class LoginUIHandler implements ILoginUIHandler {
 
   private validateCredentials(
     username: string,
-    password: string
+    password: string,
   ): UserAccount | null {
     return (
       this.users.find(
-        (user) => user.username === username && user.password === password
+        (user) => user.username === username && user.password === password,
       ) || null
     )
   }
@@ -353,7 +353,7 @@ export class LoginUIHandler implements ILoginUIHandler {
             const [key, value] = pair.split('=')
             if (key && value !== undefined) {
               formData[decodeURIComponent(key)] = decodeURIComponent(
-                value.replace(/\+/g, ' ')
+                value.replace(/\+/g, ' '),
               )
             }
           }
@@ -393,7 +393,7 @@ export class LoginUIHandler implements ILoginUIHandler {
                 const [key, value] = pair.split('=')
                 if (key && value !== undefined) {
                   formData[decodeURIComponent(key)] = decodeURIComponent(
-                    value.replace(/\+/g, ' ')
+                    value.replace(/\+/g, ' '),
                   )
                 }
               }
