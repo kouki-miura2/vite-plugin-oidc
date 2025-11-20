@@ -220,7 +220,7 @@ describe('ThirdPartyCookiesHandler', () => {
       await handler.handleStep2(mockRequest, mockResponse)
 
       const html = (mockResponse.end as any).mock.calls[0][0] as string
-      expect(html).toContain('document.cookie.includes("KEYCLOAK_3P_COOKIE")')
+      expect(html).toContain("document.cookie.includes('KEYCLOAK_3P_COOKIE')")
     })
 
     it('should send postMessage to parent window', async () => {
