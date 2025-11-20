@@ -116,13 +116,13 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('/oidc/login?return_to=')
+        expect.stringContaining('/oidc/login?return_to='),
       )
 
       // Verify the return_to parameter contains the original authorization URL
       const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location'
+        (call: any) => call[0] === 'Location',
       )
       expect(locationCall[1]).toContain(encodeURIComponent('/oidc/authorize'))
     })
@@ -142,17 +142,17 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('OIDC Login')
+        expect.stringContaining('OIDC Login'),
       )
       // Note: New simple login form doesn't display user names
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('Username')
+        expect.stringContaining('Username'),
       )
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('Password')
+        expect.stringContaining('Password'),
       )
     })
 
@@ -174,17 +174,17 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Set-Cookie',
-        expect.stringContaining('oidc_session=')
+        expect.stringContaining('oidc_session='),
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('/oidc/authorize')
+        expect.stringContaining('/oidc/authorize'),
       )
 
       // Verify session was created
       const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
       const cookieCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Set-Cookie'
+        (call: any) => call[0] === 'Set-Cookie',
       )
       const sessionCookie = cookieCall[1]
       const sessionId = sessionCookie.match(/oidc_session=([^;]+)/)?.[1]
@@ -213,11 +213,11 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('/oidc/login?error=')
+        expect.stringContaining('/oidc/login?error='),
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('Invalid%20username%20or%20password')
+        expect.stringContaining('Invalid%20username%20or%20password'),
       )
     })
   })
@@ -254,7 +254,7 @@ describe('Authorization Flow Integration Tests', () => {
 
       const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location'
+        (call: any) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
 
@@ -291,7 +291,7 @@ describe('Authorization Flow Integration Tests', () => {
       // Verify authorization code includes correct scope
       const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location'
+        (call: any) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
       const url = new URL(redirectUrl)
@@ -318,7 +318,7 @@ describe('Authorization Flow Integration Tests', () => {
       // Verify authorization code includes nonce
       const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location'
+        (call: any) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
       const url = new URL(redirectUrl)
@@ -344,11 +344,11 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('error=unauthorized_client')
+        expect.stringContaining('error=unauthorized_client'),
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('http://localhost:3000/callback')
+        expect.stringContaining('http://localhost:3000/callback'),
       )
     })
 
@@ -366,11 +366,11 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('error=invalid_request')
+        expect.stringContaining('error=invalid_request'),
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('http://evil.com/callback')
+        expect.stringContaining('http://evil.com/callback'),
       )
     })
 
@@ -388,11 +388,11 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('error=invalid_request')
+        expect.stringContaining('error=invalid_request'),
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('code_challenge')
+        expect.stringContaining('code_challenge'),
       )
     })
 
@@ -410,7 +410,7 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('error=unsupported_response_type')
+        expect.stringContaining('error=unsupported_response_type'),
       )
     })
 
@@ -428,7 +428,7 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('error=invalid_scope')
+        expect.stringContaining('error=invalid_scope'),
       )
     })
   })
@@ -459,7 +459,7 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('/oidc/login?return_to=')
+        expect.stringContaining('/oidc/login?return_to='),
       )
     })
 
@@ -479,7 +479,7 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('/oidc/login?return_to=')
+        expect.stringContaining('/oidc/login?return_to='),
       )
     })
   })
@@ -504,7 +504,7 @@ describe('Authorization Flow Integration Tests', () => {
 
       const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
       const cookieCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Set-Cookie'
+        (call: any) => call[0] === 'Set-Cookie',
       )
       const sessionCookie = cookieCall[1]
       const sessionId = sessionCookie.match(/oidc_session=([^;]+)/)?.[1]
@@ -525,10 +525,10 @@ describe('Authorization Flow Integration Tests', () => {
 
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('Invalid username or password')
+        expect.stringContaining('Invalid username or password'),
       )
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('error')
+        expect.stringContaining('error'),
       )
     })
   })
@@ -542,7 +542,7 @@ describe('Authorization Flow Integration Tests', () => {
         const code = authHandler.generateAuthorizationCode(
           'test_client',
           '1',
-          'challenge'
+          'challenge',
         )
         expect(codes.has(code)).toBe(false)
         codes.add(code)
@@ -577,7 +577,7 @@ describe('Authorization Flow Integration Tests', () => {
       // Extract authorization code from redirect
       const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location'
+        (call: any) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
       const url = new URL(redirectUrl)

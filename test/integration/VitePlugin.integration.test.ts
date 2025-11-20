@@ -102,7 +102,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/oidc',
-        expect.any(Function)
+        expect.any(Function),
       )
     })
 
@@ -116,7 +116,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/custom-auth',
-        expect.any(Function)
+        expect.any(Function),
       )
     })
 
@@ -128,7 +128,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       plugin.configureServer!(mockServer as any)
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('http://localhost:8080/oidc')
+        expect.stringContaining('http://localhost:8080/oidc'),
       )
     })
 
@@ -143,7 +143,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       // Should not override the provided issuer
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/oidc',
-        expect.any(Function)
+        expect.any(Function),
       )
     })
 
@@ -157,29 +157,31 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       plugin.configureServer!(mockServer as any)
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('OIDC endpoints registered:')
+        expect.stringContaining('OIDC endpoints registered:'),
       )
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'Discovery: http://localhost:5173/oidc/.well-known/openid-configuration'
-        )
+          'Discovery: http://localhost:5173/oidc/.well-known/openid-configuration',
+        ),
       )
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'Authorization: http://localhost:5173/oidc/authorize'
-        )
+          'Authorization: http://localhost:5173/oidc/authorize',
+        ),
       )
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Token: http://localhost:5173/oidc/token')
+        expect.stringContaining('Token: http://localhost:5173/oidc/token'),
       )
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('UserInfo: http://localhost:5173/oidc/userinfo')
+        expect.stringContaining(
+          'UserInfo: http://localhost:5173/oidc/userinfo',
+        ),
       )
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('JWKS: http://localhost:5173/oidc/jwks')
+        expect.stringContaining('JWKS: http://localhost:5173/oidc/jwks'),
       )
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Login UI: http://localhost:5173/oidc/login')
+        expect.stringContaining('Login UI: http://localhost:5173/oidc/login'),
       )
     })
 
@@ -193,7 +195,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       plugin.configureServer!(mockServer as any)
 
       expect(consoleSpy).not.toHaveBeenCalledWith(
-        expect.stringContaining('OIDC endpoints registered:')
+        expect.stringContaining('OIDC endpoints registered:'),
       )
     })
 
@@ -235,7 +237,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(200)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'application/json'
+          'application/json',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -243,18 +245,18 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
         expect(discoveryDoc.issuer).toBe('http://localhost:5173/oidc')
         expect(discoveryDoc.authorization_endpoint).toBe(
-          'http://localhost:5173/oidc/authorize'
+          'http://localhost:5173/oidc/authorize',
         )
         expect(discoveryDoc.token_endpoint).toBe(
-          'http://localhost:5173/oidc/token'
+          'http://localhost:5173/oidc/token',
         )
         expect(discoveryDoc.userinfo_endpoint).toBe(
-          'http://localhost:5173/oidc/userinfo'
+          'http://localhost:5173/oidc/userinfo',
         )
         expect(discoveryDoc.jwks_uri).toBe('http://localhost:5173/oidc/jwks')
         expect(discoveryDoc.response_types_supported).toContain('code')
         expect(discoveryDoc.grant_types_supported).toContain(
-          'authorization_code'
+          'authorization_code',
         )
         expect(discoveryDoc.code_challenge_methods_supported).toContain('S256')
       })
@@ -274,7 +276,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(200)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'application/json'
+          'application/json',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -302,7 +304,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(302)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Location',
-          expect.stringContaining('/login?return_to=')
+          expect.stringContaining('/login?return_to='),
         )
       })
 
@@ -318,7 +320,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(302)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Location',
-          expect.stringContaining('error=unauthorized_client')
+          expect.stringContaining('error=unauthorized_client'),
         )
       })
 
@@ -334,7 +336,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(302)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Location',
-          expect.stringContaining('error=invalid_request')
+          expect.stringContaining('error=invalid_request'),
         )
       })
     })
@@ -353,7 +355,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(200)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'text/html; charset=utf-8'
+          'text/html; charset=utf-8',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -378,11 +380,11 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(302)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Set-Cookie',
-          expect.stringContaining('oidc_session=')
+          expect.stringContaining('oidc_session='),
         )
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Location',
-          expect.stringContaining('/authorize')
+          expect.stringContaining('/authorize'),
         )
       })
 
@@ -401,11 +403,11 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(302)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Location',
-          expect.stringContaining('/login?error=')
+          expect.stringContaining('/login?error='),
         )
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Location',
-          expect.stringContaining('Invalid%20username%20or%20password')
+          expect.stringContaining('Invalid%20username%20or%20password'),
         )
       })
     })
@@ -432,7 +434,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(400)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'application/json'
+          'application/json',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -455,7 +457,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(400)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'application/json'
+          'application/json',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -478,7 +480,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(400)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'application/json'
+          'application/json',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -501,7 +503,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(401)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'application/json'
+          'application/json',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -523,7 +525,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(mockResponse.statusCode).toBe(401)
         expect(mockResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'application/json'
+          'application/json',
         )
 
         const responseBody = (mockResponse.end as any).mock.calls[0][0]
@@ -605,7 +607,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       expect(authResponse.statusCode).toBe(302)
       expect(authResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('/login?return_to=')
+        expect.stringContaining('/login?return_to='),
       )
 
       // Step 2: Display login page
@@ -625,7 +627,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       expect(loginPageResponse.statusCode).toBe(200)
       expect(loginPageResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
 
       // Step 3: Submit login form
@@ -648,17 +650,17 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       expect(loginSubmitResponse.statusCode).toBe(302)
       expect(loginSubmitResponse.setHeader).toHaveBeenCalledWith(
         'Set-Cookie',
-        expect.stringContaining('oidc_session=')
+        expect.stringContaining('oidc_session='),
       )
       expect(loginSubmitResponse.setHeader).toHaveBeenCalledWith(
         'Location',
-        expect.stringContaining('/authorize')
+        expect.stringContaining('/authorize'),
       )
 
       // Extract session cookie for next request
       const setHeaderCalls = (loginSubmitResponse.setHeader as any).mock.calls
       const cookieCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Set-Cookie'
+        (call: any) => call[0] === 'Set-Cookie',
       )
       const sessionCookie = cookieCall[1]
 
@@ -683,7 +685,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       const authSetHeaderCalls = (authWithSessionResponse.setHeader as any).mock
         .calls
       const authLocationCall = authSetHeaderCalls.find(
-        (call: any) => call[0] === 'Location'
+        (call: any) => call[0] === 'Location',
       )
       const redirectUrl = authLocationCall[1]
 
@@ -740,11 +742,11 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/custom-oidc',
-        expect.any(Function)
+        expect.any(Function),
       )
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Initializing OIDC endpoints at /custom-oidc')
+        expect.stringContaining('Initializing OIDC endpoints at /custom-oidc'),
       )
     })
 
@@ -761,12 +763,12 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/auth',
-        expect.any(Function)
+        expect.any(Function),
       )
 
       // Should not log since enableLogging is false
       expect(consoleSpy).not.toHaveBeenCalledWith(
-        expect.stringContaining('OIDC endpoints registered:')
+        expect.stringContaining('OIDC endpoints registered:'),
       )
     })
   })
@@ -792,11 +794,11 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
       expect(mockServer1.middlewares.use).toHaveBeenCalledWith(
         '/oidc1',
-        expect.any(Function)
+        expect.any(Function),
       )
       expect(mockServer2.middlewares.use).toHaveBeenCalledWith(
         '/oidc2',
-        expect.any(Function)
+        expect.any(Function),
       )
     })
   })
@@ -835,15 +837,15 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(step1Response.statusCode).toBe(200)
         expect(step1Response.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'text/html; charset=utf-8'
+          'text/html; charset=utf-8',
         )
         expect(step1Response.setHeader).toHaveBeenCalledWith(
           'Cache-Control',
-          'no-store, no-cache, must-revalidate'
+          'no-store, no-cache, must-revalidate',
         )
         expect(step1Response.setHeader).toHaveBeenCalledWith(
           'Pragma',
-          'no-cache'
+          'no-cache',
         )
 
         const html = (step1Response.end as any).mock.calls[0][0] as string
@@ -851,7 +853,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(html).toContain('checkStorageAccess')
         expect(html).toContain('KEYCLOAK_3P_COOKIE')
         expect(html).toContain(
-          'http://localhost:5173/oidc/protocol/openid-connect/3p-cookies/step2.html'
+          'http://localhost:5173/oidc/protocol/openid-connect/3p-cookies/step2.html',
         )
       })
 
@@ -882,7 +884,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
         const html = (step1Response.end as any).mock.calls[0][0] as string
         expect(html).toContain(
-          'http://localhost:5173/auth/protocol/openid-connect/3p-cookies/step2.html'
+          'http://localhost:5173/auth/protocol/openid-connect/3p-cookies/step2.html',
         )
       })
 
@@ -950,15 +952,15 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(step2Response.statusCode).toBe(200)
         expect(step2Response.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'text/html; charset=utf-8'
+          'text/html; charset=utf-8',
         )
         expect(step2Response.setHeader).toHaveBeenCalledWith(
           'Cache-Control',
-          'no-store, no-cache, must-revalidate'
+          'no-store, no-cache, must-revalidate',
         )
         expect(step2Response.setHeader).toHaveBeenCalledWith(
           'Pragma',
-          'no-cache'
+          'no-cache',
         )
 
         const html = (step2Response.end as any).mock.calls[0][0] as string
@@ -1011,15 +1013,15 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(iframeResponse.statusCode).toBe(200)
         expect(iframeResponse.setHeader).toHaveBeenCalledWith(
           'Content-Type',
-          'text/html; charset=utf-8'
+          'text/html; charset=utf-8',
         )
         expect(iframeResponse.setHeader).toHaveBeenCalledWith(
           'Cache-Control',
-          'no-store, no-cache, must-revalidate'
+          'no-store, no-cache, must-revalidate',
         )
         expect(iframeResponse.setHeader).toHaveBeenCalledWith(
           'Pragma',
-          'no-cache'
+          'no-cache',
         )
 
         const html = (iframeResponse.end as any).mock.calls[0][0] as string
@@ -1096,7 +1098,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         expect(step1HTML).toContain('checkStorageAccess')
         expect(step1HTML).toContain('attemptWithTestCookie')
         expect(step1HTML).toContain(
-          '/protocol/openid-connect/3p-cookies/step2.html'
+          '/protocol/openid-connect/3p-cookies/step2.html',
         )
 
         // Step 2: Load step2.html (after redirect from step1)
@@ -1121,7 +1123,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
         const step2HTML = (step2Response.end as any).mock.calls[0][0] as string
         expect(step2HTML).toContain(
-          'document.cookie.includes("KEYCLOAK_3P_COOKIE")'
+          'document.cookie.includes("KEYCLOAK_3P_COOKIE")',
         )
         expect(step2HTML).toContain('window.parent.postMessage')
 
@@ -1188,10 +1190,10 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         // Verify that the iframe responds to session state checks
         expect(iframeHTML).toContain('parts.length === 2')
         expect(iframeHTML).toContain(
-          "const response = sessionState + ' unchanged'"
+          "const response = sessionState + ' unchanged'",
         )
         expect(iframeHTML).toContain(
-          'event.source.postMessage(response, event.origin)'
+          'event.source.postMessage(response, event.origin)',
         )
       })
     })

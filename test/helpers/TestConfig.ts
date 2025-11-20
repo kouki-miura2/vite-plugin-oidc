@@ -5,7 +5,7 @@
 import type { OIDCPluginConfig } from '../../src/types/index.js'
 
 export function getTestConfig(
-  overrides: Partial<OIDCPluginConfig> = {}
+  overrides: Partial<OIDCPluginConfig> = {},
 ): OIDCPluginConfig {
   const defaultTestConfig: OIDCPluginConfig = {
     users: [

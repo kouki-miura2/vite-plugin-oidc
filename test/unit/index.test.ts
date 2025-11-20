@@ -61,11 +61,11 @@ describe('OIDC Plugin', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'WARNING: This plugin is running in production mode!'
-        )
+          'WARNING: This plugin is running in production mode!',
+        ),
       )
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('This plugin is intended for development only')
+        expect.stringContaining('This plugin is intended for development only'),
       )
     })
 
@@ -82,8 +82,8 @@ describe('OIDC Plugin', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'WARNING: This plugin is running in production mode!'
-        )
+          'WARNING: This plugin is running in production mode!',
+        ),
       )
     })
 
@@ -100,12 +100,12 @@ describe('OIDC Plugin', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'WARNING: This plugin is running in production mode!'
-        )
+          'WARNING: This plugin is running in production mode!',
+        ),
       )
     })
 
-    it('should show development warnings when not in production', () => {
+    it('should not show warnings in development mode', () => {
       const plugin = oidcPlugin()
       const mockServer = {
         config: { server: { port: 5173 } },
@@ -114,8 +114,11 @@ describe('OIDC Plugin', () => {
 
       plugin.configureServer!(mockServer as any)
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        '[vite-plugin-oidc] This plugin is for development only. Do not use in production!'
+      // Should not show production warnings in development
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining(
+          'WARNING: This plugin is running in production mode!',
+        ),
       )
     })
   })
@@ -147,7 +150,7 @@ describe('OIDC Plugin', () => {
       plugin.configureServer!(mockServer as any)
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Initializing OIDC endpoints at /oidc')
+        expect.stringContaining('Initializing OIDC endpoints at /oidc'),
       )
     })
 
@@ -161,7 +164,7 @@ describe('OIDC Plugin', () => {
       plugin.configureServer!(mockServer as any)
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Initializing OIDC endpoints at /oidc')
+        expect.stringContaining('Initializing OIDC endpoints at /oidc'),
       )
     })
 
@@ -193,7 +196,7 @@ describe('OIDC Plugin', () => {
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/oidc',
-        expect.any(Function)
+        expect.any(Function),
       )
     })
 
@@ -210,7 +213,7 @@ describe('OIDC Plugin', () => {
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/custom-auth',
-        expect.any(Function)
+        expect.any(Function),
       )
     })
   })

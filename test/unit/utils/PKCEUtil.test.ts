@@ -15,7 +15,7 @@ describe('PKCEUtil', () => {
       const result = PKCEUtil.verifyCodeChallenge(
         codeVerifier,
         codeChallenge,
-        'S256'
+        'S256',
       )
       expect(result).toBe(true)
     })
@@ -27,7 +27,7 @@ describe('PKCEUtil', () => {
       const result = PKCEUtil.verifyCodeChallenge(
         invalidCodeVerifier,
         codeChallenge,
-        'S256'
+        'S256',
       )
       expect(result).toBe(false)
     })
@@ -39,7 +39,7 @@ describe('PKCEUtil', () => {
       const result = PKCEUtil.verifyCodeChallenge(
         codeVerifier,
         codeChallenge,
-        'plain'
+        'plain',
       )
       expect(result).toBe(false)
     })

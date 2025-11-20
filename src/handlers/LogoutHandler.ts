@@ -38,7 +38,7 @@ export class LogoutHandler implements LogoutHandler {
       // Parse query parameters
       const url = new URL(req.url || '', 'http://localhost')
       const postLogoutRedirectUri = url.searchParams.get(
-        'post_logout_redirect_uri'
+        'post_logout_redirect_uri',
       )
       const state = url.searchParams.get('state')
       const idTokenHint = url.searchParams.get('id_token_hint')
@@ -114,7 +114,7 @@ export class LogoutHandler implements LogoutHandler {
           errorMessage: error instanceof Error ? error.message : String(error),
           timestamp: Date.now(),
         },
-        error instanceof Error ? error : new Error(String(error))
+        error instanceof Error ? error : new Error(String(error)),
       )
 
       res.statusCode = 500

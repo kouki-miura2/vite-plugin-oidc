@@ -29,7 +29,7 @@ export class UserInfoHandler implements IUserInfoHandler {
     store: InMemoryStore,
     config: OIDCPluginConfig,
     users: UserAccount[],
-    tokenService: TokenService
+    tokenService: TokenService,
   ) {
     this.store = store
     this.config = config
@@ -45,7 +45,7 @@ export class UserInfoHandler implements IUserInfoHandler {
       if (req.method !== 'GET') {
         const error = ValidationUtil.createErrorResponse(
           'invalid_request',
-          'UserInfo endpoint only accepts GET requests'
+          'UserInfo endpoint only accepts GET requests',
         )
         logger.logUserInfoError(error, { requestId })
         this.sendErrorResponse(res, error, 405)
@@ -57,7 +57,7 @@ export class UserInfoHandler implements IUserInfoHandler {
       if (!authHeader) {
         const error = ValidationUtil.createErrorResponse(
           'invalid_token',
-          'Missing Authorization header'
+          'Missing Authorization header',
         )
         logger.logUserInfoError(error, { requestId })
         this.sendErrorResponse(res, error, 401)
@@ -69,7 +69,7 @@ export class UserInfoHandler implements IUserInfoHandler {
       if (!tokenMatch) {
         const error = ValidationUtil.createErrorResponse(
           'invalid_token',
-          'Invalid Authorization header format. Expected: Bearer <token>'
+          'Invalid Authorization header format. Expected: Bearer <token>',
         )
         logger.logUserInfoError(error, { requestId })
         this.sendErrorResponse(res, error, 401)
@@ -82,7 +82,7 @@ export class UserInfoHandler implements IUserInfoHandler {
       if (!ValidationUtil.isValidAccessToken(accessToken)) {
         const error = ValidationUtil.createErrorResponse(
           'invalid_token',
-          'Invalid access token format'
+          'Invalid access token format',
         )
         logger.logUserInfoError(error, { requestId })
         this.sendErrorResponse(res, error, 401)
@@ -103,7 +103,7 @@ export class UserInfoHandler implements IUserInfoHandler {
       if (!validation.isValid) {
         const error = ValidationUtil.createErrorResponse(
           'invalid_token',
-          validation.error || 'Invalid access token'
+          validation.error || 'Invalid access token',
         )
         logger.logUserInfoError(error, {
           userId: validation.userId,
@@ -119,7 +119,7 @@ export class UserInfoHandler implements IUserInfoHandler {
       if (!userInfo) {
         const error = ValidationUtil.createErrorResponse(
           'invalid_token',
-          'User not found'
+          'User not found',
         )
         logger.logUserInfoError(error, {
           userId: validation.userId,
@@ -133,7 +133,7 @@ export class UserInfoHandler implements IUserInfoHandler {
       // Filter user info based on token scope
       const filteredUserInfo = this.filterUserInfoByScope(
         userInfo,
-        validation.scope
+        validation.scope,
       )
 
       // Log successful userinfo response
@@ -152,7 +152,7 @@ export class UserInfoHandler implements IUserInfoHandler {
     } catch (error) {
       const oidcError = ValidationUtil.createErrorResponse(
         'server_error',
-        'Internal server error'
+        'Internal server error',
       )
 
       logger.error(
@@ -163,7 +163,7 @@ export class UserInfoHandler implements IUserInfoHandler {
           errorMessage:
             error instanceof Error ? error.message : 'Unknown error',
         },
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       )
 
       this.sendErrorResponse(res, oidcError, 500)
@@ -232,7 +232,7 @@ export class UserInfoHandler implements IUserInfoHandler {
    */
   private filterUserInfoByScope(
     userInfo: UserProfile,
-    scope?: string
+    scope?: string,
   ): UserProfile {
     if (!scope) {
       // If no scope, return minimal info (just sub)
@@ -286,7 +286,7 @@ export class UserInfoHandler implements IUserInfoHandler {
   private sendErrorResponse(
     res: Response,
     error: OIDCError,
-    statusCode?: number
+    statusCode?: number,
   ): void {
     const finalStatusCode =
       statusCode || ValidationUtil.getErrorStatusCode(error.error)

@@ -37,7 +37,7 @@ export class TokenHandler implements ITokenHandler {
     config: OIDCPluginConfig,
     users: UserAccount[],
     clients: ClientConfig[],
-    tokenService: TokenService
+    tokenService: TokenService,
   ) {
     this.store = store
     this.config = config
@@ -54,7 +54,7 @@ export class TokenHandler implements ITokenHandler {
       if (req.method !== 'POST') {
         const error = ValidationUtil.createErrorResponse(
           'invalid_request',
-          'Token endpoint only accepts POST requests'
+          'Token endpoint only accepts POST requests',
         )
         logger.logTokenError(error, { requestId })
         this.sendErrorResponse(res, error)
@@ -89,7 +89,7 @@ export class TokenHandler implements ITokenHandler {
       try {
         const tokenResponse = this.exchangeCodeForTokens(
           params.code,
-          params.code_verifier
+          params.code_verifier,
         )
 
         // Get user info for logging
@@ -113,7 +113,7 @@ export class TokenHandler implements ITokenHandler {
       } catch (error) {
         const oidcError = ValidationUtil.createErrorResponse(
           'invalid_grant',
-          'Invalid authorization code or code verifier'
+          'Invalid authorization code or code verifier',
         )
         logger.logTokenError(oidcError, {
           clientId: params.client_id,
@@ -126,7 +126,7 @@ export class TokenHandler implements ITokenHandler {
     } catch (error) {
       const oidcError = ValidationUtil.createErrorResponse(
         'server_error',
-        'Internal server error'
+        'Internal server error',
       )
 
       logger.error(
@@ -137,7 +137,7 @@ export class TokenHandler implements ITokenHandler {
           errorMessage:
             error instanceof Error ? error.message : 'Unknown error',
         },
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       )
 
       this.sendErrorResponse(res, oidcError)
@@ -160,7 +160,7 @@ export class TokenHandler implements ITokenHandler {
       !PKCEUtil.verifyCodeChallenge(
         codeVerifier,
         authCode.codeChallenge,
-        authCode.codeChallengeMethod
+        authCode.codeChallengeMethod,
       )
     ) {
       throw new Error('Invalid code verifier')

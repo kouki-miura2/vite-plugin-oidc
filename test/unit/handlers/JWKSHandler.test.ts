@@ -135,7 +135,7 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
       warningHandler.generateJWKS()
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        '[OIDC JWKS] Warning: Exposing symmetric key in JWKS is for development only!'
+        '[OIDC JWKS] Warning: Exposing symmetric key in JWKS is for development only!',
       )
 
       consoleSpy.mockRestore()
@@ -154,7 +154,7 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
       const invalidHandler = new JWKSHandler(invalidConfig)
 
       expect(() => invalidHandler.generateJWKS()).toThrow(
-        'Public key is required for RS256 algorithm'
+        'Public key is required for RS256 algorithm',
       )
     })
   })
@@ -165,19 +165,19 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
 
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        'public, max-age=86400'
+        'public, max-age=86400',
       )
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
-        '*'
+        '*',
       )
       expect(mockResponse.statusCode).toBe(200)
       expect(mockResponse.end).toHaveBeenCalledWith(
-        expect.stringContaining('"keys"')
+        expect.stringContaining('"keys"'),
       )
     })
 
@@ -193,7 +193,7 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
 
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
-        'application/json'
+        'application/json',
       )
       expect(mockResponse.statusCode).toBe(500)
       expect(mockResponse.end).toHaveBeenCalledWith(
@@ -201,7 +201,7 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
           error: 'server_error',
           error_description:
             'Internal server error while generating JWKS document',
-        })
+        }),
       )
       expect(consoleSpy).toHaveBeenCalled()
 
@@ -222,7 +222,7 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
       await loggingHandler.handleJWKS(mockRequest, mockResponse)
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        '[OIDC JWKS] JWKS document served'
+        '[OIDC JWKS] JWKS document served',
       )
 
       consoleSpy.mockRestore()

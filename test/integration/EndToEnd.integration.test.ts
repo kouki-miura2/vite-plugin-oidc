@@ -81,7 +81,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
     method: string,
     url: string,
     headers: Record<string, string> = {},
-    body?: string
+    body?: string,
   ): Promise<{
     statusCode: number
     headers: Record<string, string>
@@ -133,7 +133,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
       // Requirements: 4.1 - OIDC Discovery endpoint
       const discoveryResponse = await makeRequest(
         'GET',
-        '/.well-known/openid-configuration'
+        '/.well-known/openid-configuration',
       )
 
       expect(discoveryResponse.statusCode).toBe(200)
@@ -142,13 +142,13 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
       const discoveryDoc = JSON.parse(discoveryResponse.body)
       expect(discoveryDoc.issuer).toBe('http://localhost:5173/oidc')
       expect(discoveryDoc.authorization_endpoint).toBe(
-        'http://localhost:5173/oidc/authorize'
+        'http://localhost:5173/oidc/authorize',
       )
       expect(discoveryDoc.token_endpoint).toBe(
-        'http://localhost:5173/oidc/token'
+        'http://localhost:5173/oidc/token',
       )
       expect(discoveryDoc.userinfo_endpoint).toBe(
-        'http://localhost:5173/oidc/userinfo'
+        'http://localhost:5173/oidc/userinfo',
       )
       expect(discoveryDoc.jwks_uri).toBe('http://localhost:5173/oidc/jwks')
       expect(discoveryDoc.response_types_supported).toContain('code')
@@ -184,9 +184,9 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
 
       // Step 1: Authorization Request - Should redirect to login
       const authUrl = `/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-        redirectUri
+        redirectUri,
       )}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${state}&scope=${encodeURIComponent(
-        scope
+        scope,
       )}&nonce=${nonce}`
       const authResponse = await makeRequest('GET', authUrl)
 
@@ -196,20 +196,20 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
       // Step 2: Login Page - Should display login form
       const loginPageUrl = authResponse.headers['Location']!.replace(
         '/oidc',
-        ''
+        '',
       )
       const loginPageResponse = await makeRequest('GET', loginPageUrl)
 
       expect(loginPageResponse.statusCode).toBe(200)
       expect(loginPageResponse.headers['Content-Type']).toBe(
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
       expect(loginPageResponse.body).toContain('Test Client') // Updated title
       expect(loginPageResponse.body).toContain('Username')
 
       // Step 3: Login Form Submission - Should authenticate and redirect
       const loginFormData = `username=johndoe&password=password123&return_to=${encodeURIComponent(
-        authUrl
+        authUrl,
       )}`
       const loginSubmitResponse = await makeRequest(
         'POST',
@@ -217,12 +217,12 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
         {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        loginFormData
+        loginFormData,
       )
 
       expect(loginSubmitResponse.statusCode).toBe(302)
       expect(loginSubmitResponse.headers['Set-Cookie']).toContain(
-        'oidc_session='
+        'oidc_session=',
       )
       expect(loginSubmitResponse.headers['Location']).toContain('/authorize')
 
@@ -241,7 +241,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
 
       // Test with invalid authorization code
       const tokenRequestBody = `grant_type=authorization_code&code=invalid_code&redirect_uri=${encodeURIComponent(
-        redirectUri
+        redirectUri,
       )}&client_id=${clientId}&code_verifier=${codeVerifier}`
       const tokenResponse = await makeRequest(
         'POST',
@@ -249,7 +249,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
         {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        tokenRequestBody
+        tokenRequestBody,
       )
 
       expect(tokenResponse.statusCode).toBe(400)
@@ -265,7 +265,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
         {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        'grant_type=client_credentials&client_id=test_client'
+        'grant_type=client_credentials&client_id=test_client',
       )
 
       expect(invalidGrantResponse.statusCode).toBe(400)
@@ -283,13 +283,13 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
 
       // Step 1: Try authorization with invalid client_id
       const authUrl = `/authorize?client_id=${invalidClientId}&redirect_uri=${encodeURIComponent(
-        redirectUri
+        redirectUri,
       )}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&state=test_invalid_client&scope=openid`
       const authResponse = await makeRequest('GET', authUrl)
 
       expect(authResponse.statusCode).toBe(302)
       expect(authResponse.headers['Location']).toContain(
-        'error=unauthorized_client'
+        'error=unauthorized_client',
       )
     })
 
@@ -324,7 +324,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
 
       // Start authorization flow to get to login page
       const authUrl = `/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-        redirectUri
+        redirectUri,
       )}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&state=test_users&scope=openid`
       const authResponse = await makeRequest('GET', authUrl)
 
@@ -334,13 +334,13 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
       // Get login page
       const loginPageUrl = authResponse.headers['Location']!.replace(
         '/oidc',
-        ''
+        '',
       )
       const loginPageResponse = await makeRequest('GET', loginPageUrl)
 
       expect(loginPageResponse.statusCode).toBe(200)
       expect(loginPageResponse.headers['Content-Type']).toBe(
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
 
       // Verify login form is displayed (new simple form doesn't show user names)
@@ -371,7 +371,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
           {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-          loginFormData
+          loginFormData,
         )
 
         expect(loginResponse.statusCode).toBe(302)
@@ -386,7 +386,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
 
       // Test with invalid username
       const invalidUserData = `username=invalid_user&password=admin123&return_to=${encodeURIComponent(
-        returnTo
+        returnTo,
       )}`
       const invalidUserResponse = await makeRequest(
         'POST',
@@ -394,18 +394,18 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
         {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        invalidUserData
+        invalidUserData,
       )
 
       expect(invalidUserResponse.statusCode).toBe(302)
       expect(invalidUserResponse.headers['Location']).toContain('/login?error=')
       expect(invalidUserResponse.headers['Location']).toContain(
-        'Invalid%20username%20or%20password'
+        'Invalid%20username%20or%20password',
       )
 
       // Test with invalid password
       const invalidPasswordData = `username=johndoe&password=wrongpassword&return_to=${encodeURIComponent(
-        returnTo
+        returnTo,
       )}`
       const invalidPasswordResponse = await makeRequest(
         'POST',
@@ -413,15 +413,15 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
         {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        invalidPasswordData
+        invalidPasswordData,
       )
 
       expect(invalidPasswordResponse.statusCode).toBe(302)
       expect(invalidPasswordResponse.headers['Location']).toContain(
-        '/login?error='
+        '/login?error=',
       )
       expect(invalidPasswordResponse.headers['Location']).toContain(
-        'Invalid%20username%20or%20password'
+        'Invalid%20username%20or%20password',
       )
     })
   })

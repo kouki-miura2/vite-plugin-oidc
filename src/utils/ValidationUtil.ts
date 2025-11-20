@@ -18,7 +18,7 @@ export class ValidationUtil {
    */
   static validateAuthorizationRequest(
     params: AuthorizationParams,
-    clients: ClientConfig[]
+    clients: ClientConfig[],
   ): ValidationResult {
     // Check required parameters
     const requiredParams = [
@@ -146,7 +146,7 @@ export class ValidationUtil {
    */
   static validateTokenRequest(
     params: TokenParams,
-    clients: ClientConfig[]
+    clients: ClientConfig[],
   ): ValidationResult {
     // Check required parameters
     const requiredParams = [
@@ -280,7 +280,7 @@ export class ValidationUtil {
 
     // Check for unsupported scopes
     const invalidScopes = requestedScopes.filter(
-      (s) => !supportedScopes.includes(s)
+      (s) => !supportedScopes.includes(s),
     )
     if (invalidScopes.length > 0) {
       return {
@@ -288,7 +288,7 @@ export class ValidationUtil {
         error: {
           error: 'invalid_scope',
           error_description: `Unsupported scope(s): ${invalidScopes.join(
-            ', '
+            ', ',
           )}`,
         },
       }
@@ -297,7 +297,7 @@ export class ValidationUtil {
     // Validate individual scope format
     const scopePattern = /^[a-zA-Z0-9_-]+$/
     const invalidFormatScopes = requestedScopes.filter(
-      (s) => !scopePattern.test(s)
+      (s) => !scopePattern.test(s),
     )
     if (invalidFormatScopes.length > 0) {
       return {
@@ -305,7 +305,7 @@ export class ValidationUtil {
         error: {
           error: 'invalid_scope',
           error_description: `Invalid scope format: ${invalidFormatScopes.join(
-            ', '
+            ', ',
           )}`,
         },
       }
@@ -470,7 +470,7 @@ export class ValidationUtil {
     error: string,
     description?: string,
     uri?: string,
-    state?: string
+    state?: string,
   ): OIDCError {
     const errorResponse: OIDCError = { error }
 
