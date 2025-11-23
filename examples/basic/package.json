@@ -1,7 +1,7 @@
 {
-  "name": "test-client",
+  "name": "vite-plugin-oidc-example-basic",
   "version": "0.0.4",
-  "description": "Sample OIDC client application for testing vite-plugin-oidc with Authorization Code + PKCE flow",
+  "description": "Basic example application demonstrating vite-plugin-oidc with Authorization Code + PKCE flow",
   "scripts": {
     "dev": "vite"
   },
@@ -18,7 +18,7 @@
   "devDependencies": {
     "typescript": "5.9.3",
     "vite": "7.1.9",
-    "vite-plugin-oidc": "file:.."
+    "vite-plugin-oidc": "file:../.."
   },
   "dependencies": {
     "oidc-client-ts": "3.3.0",

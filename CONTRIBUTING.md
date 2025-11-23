@@ -150,7 +150,8 @@ vite-plugin-oidc/
 │   ├── middleware/         # Express-style middleware
 │   │   └── index.ts
 │   └── index.ts            # Main entry point
-├── test-client/            # Example client application
+├── examples/               # Example applications
+│   └── basic/              # Basic OIDC client example
 ├── dist/                   # Build output
 └── test/                   # Test files
 ```
@@ -186,12 +187,12 @@ npm run test:coverage
 - Test both success and error cases
 - Mock external dependencies where appropriate
 
-### Test Client
+### Example Application
 
-The `test-client/` directory contains a working example of an OIDC client that can be used to test the plugin:
+The `examples/basic/` directory contains a working example of an OIDC client that can be used to test the plugin:
 
 ```bash
-cd test-client
+cd examples/basic
 npm install
 npm run dev
 ```
