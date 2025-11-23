@@ -6,7 +6,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { DiscoveryHandler } from '../../../src/handlers/DiscoveryHandler.js'
 import type { OIDCPluginConfig } from '../../../src/types/config.js'
 import type { Request, Response } from '../../../src/types/handlers.js'
-import { ENDPOINTS, SUPPORTED } from '../../../src/constants.js'
 
 describe('DiscoveryHandler', () => {
   let handler: DiscoveryHandler

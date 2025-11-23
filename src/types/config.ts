@@ -12,7 +12,7 @@ export interface UserProfile {
   picture?: string
   locale?: string
   username?: string // For Keycloak compatibility
-  [key: string]: any // Additional custom claims
+  [key: string]: unknown // Additional custom claims
 }
 
 export interface UserAccount {

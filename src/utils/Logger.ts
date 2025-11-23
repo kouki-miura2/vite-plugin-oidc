@@ -18,7 +18,7 @@ export interface LogContext {
   userId?: string
   requestId?: string
   timestamp?: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface LogEntry {

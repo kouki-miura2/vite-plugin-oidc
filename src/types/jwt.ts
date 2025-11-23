@@ -8,7 +8,7 @@ export interface JWTPayload {
   sub: string
   iat: number
   exp: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface AccessTokenPayload extends JWTPayload {
@@ -38,5 +38,5 @@ export interface TokenGenerationOptions {
   audience: string
   subject: string
   expiresIn: number
-  additionalClaims?: Record<string, any>
+  additionalClaims?: Record<string, unknown>
 }

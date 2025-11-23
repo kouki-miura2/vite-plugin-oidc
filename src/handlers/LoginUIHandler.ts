@@ -336,9 +336,19 @@ export class LoginUIHandler implements ILoginUIHandler {
           body = req.body.toString()
           console.log('parseFormData - Using buffer body:', body)
         } else if (typeof req.body === 'object') {
-          // Assume it's already parsed
+          // Assume it's already parsed: normalize object values to strings
           console.log('parseFormData - Using parsed object body:', req.body)
-          resolve(req.body)
+          try {
+            const parsedObj: Record<string, string> = {}
+            const obj = req.body as Record<string, unknown>
+            for (const [k, v] of Object.entries(obj)) {
+              if (v === undefined || v === null) continue
+              parsedObj[k] = typeof v === 'string' ? v : String(v)
+            }
+            resolve(parsedObj)
+          } catch (err) {
+            reject(err)
+          }
           return
         }
       }
@@ -418,7 +428,7 @@ export class LoginUIHandler implements ILoginUIHandler {
   }
 
   private escapeHtml(text: string): string {
-    const div = { innerHTML: '' } as any
+    const div = { innerHTML: '' } as unknown as HTMLDivElement
     div.textContent = text
     return (
       div.innerHTML ||

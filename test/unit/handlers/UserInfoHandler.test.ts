@@ -79,7 +79,7 @@ describe('UserInfoHandler', () => {
     // Mock TokenService
     mockTokenService = {
       validateAccessToken: vi.fn(),
-    } as any
+    } as unknown as TokenService
 
     // Mock response
     mockResponse = {

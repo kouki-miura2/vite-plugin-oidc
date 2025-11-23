@@ -5,10 +5,21 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import oidcPlugin from '../../src/index.js'
 
+interface MockViteServer {
+  config: {
+    server: {
+      port?: number
+    }
+  }
+  middlewares: {
+    use: ReturnType<typeof vi.fn>
+  }
+}
+
 describe('OIDC Plugin', () => {
-  let consoleSpy: any
-  let consoleErrorSpy: any
-  let consoleWarnSpy: any
+  let consoleSpy: ReturnType<typeof vi.spyOn>
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
@@ -52,12 +63,12 @@ describe('OIDC Plugin', () => {
       process.env.NODE_ENV = 'production'
 
       const plugin = oidcPlugin()
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 5173 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -73,12 +84,12 @@ describe('OIDC Plugin', () => {
       process.env.VITE_ENV = 'production'
 
       const plugin = oidcPlugin()
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 5173 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -96,7 +107,7 @@ describe('OIDC Plugin', () => {
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -107,12 +118,12 @@ describe('OIDC Plugin', () => {
 
     it('should not show warnings in development mode', () => {
       const plugin = oidcPlugin()
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 5173 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // Should not show production warnings in development
       expect(consoleErrorSpy).not.toHaveBeenCalledWith(
@@ -126,12 +137,12 @@ describe('OIDC Plugin', () => {
   describe('Default User Accounts', () => {
     it('should provide multiple test user accounts with different roles', () => {
       const plugin = oidcPlugin()
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 5173 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // The default config should have been applied with multiple users
       // We can't directly access the config, but we can verify the plugin was created
@@ -142,12 +153,12 @@ describe('OIDC Plugin', () => {
   describe('Dynamic Issuer Configuration', () => {
     it('should set dynamic issuer based on server port', () => {
       const plugin = oidcPlugin()
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 8080 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('Initializing OIDC endpoints at /oidc'),
@@ -156,12 +167,12 @@ describe('OIDC Plugin', () => {
 
     it('should use default port 5173 when no port is specified', () => {
       const plugin = oidcPlugin()
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: {} },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('Initializing OIDC endpoints at /oidc'),
@@ -172,12 +183,12 @@ describe('OIDC Plugin', () => {
       const plugin = oidcPlugin({
         issuer: 'https://custom-issuer.com/auth',
       })
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 5173 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // Should not override the provided issuer
       expect(plugin.name).toBe('vite-plugin-oidc')
@@ -187,12 +198,12 @@ describe('OIDC Plugin', () => {
   describe('Middleware Registration', () => {
     it('should register middleware with the server', () => {
       const plugin = oidcPlugin()
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 5173 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/oidc',
@@ -204,12 +215,12 @@ describe('OIDC Plugin', () => {
       const plugin = oidcPlugin({
         basePath: '/custom-auth',
       })
-      const mockServer = {
+      const mockServer: MockViteServer = {
         config: { server: { port: 5173 } },
         middlewares: { use: vi.fn() },
       }
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/custom-auth',
