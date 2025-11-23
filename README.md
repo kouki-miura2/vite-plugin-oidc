@@ -333,7 +333,7 @@ http://localhost:5173/realms/myrealm/protocol/openid-connect/login-status-iframe
 
 ### Using keycloak-js Client Library
 
-The plugin works with the official `keycloak-js` library. See the [test-client/index-kc.html](test-client/index-kc.html) example for a working implementation.
+The plugin works with the official `keycloak-js` library. See the [examples/basic/index-kc.html](examples/basic/index-kc.html) example for a working implementation.
 
 ```bash
 npm install keycloak-js
@@ -479,9 +479,9 @@ This plugin **requires PKCE** for all authorization flows:
    const codeChallenge = base64urlEncode(sha256(codeVerifier))
    ```
 
-## Test Client
+## Examples
 
-The plugin includes a complete test client application in the `test-client/` directory that demonstrates:
+The plugin includes a complete example application in the `examples/basic/` directory that demonstrates:
 
 - Authorization Code Flow with PKCE
 - Token exchange and validation
@@ -489,12 +489,12 @@ The plugin includes a complete test client application in the `test-client/` dir
 - Logout functionality
 
 ```bash
-cd test-client
+cd examples/basic
 npm install
 npm run dev
 ```
 
-The test client works with any OIDC provider by configuring the `.env` file:
+The example works with any OIDC provider by configuring the `.env` file:
 
 ```bash
 # Use with vite-plugin-oidc (default)

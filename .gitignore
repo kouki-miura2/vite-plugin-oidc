@@ -1,13 +1,13 @@
 # Dependencies
 node_modules/
 
-# Test client (development only)
-test-client/node_modules/
-test-client/dist/
-test-client/.env.local
-test-client/.env.development.local
-test-client/.env.test.local
-test-client/.env.production.local
+# Examples (development only)
+examples/**/node_modules/
+examples/**/dist/
+examples/**/.env.local
+examples/**/.env.development.local
+examples/**/.env.test.local
+examples/**/.env.production.local
 
 # Build output
 dist/
