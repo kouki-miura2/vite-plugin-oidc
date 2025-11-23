@@ -18,13 +18,13 @@ export interface Request {
   url?: string
   method?: string
   headers: Record<string, string | string[] | undefined>
-  body?: any
+  body?: unknown
   query?: Record<string, string>
   readable?: boolean
   on?(event: 'data', listener: (chunk: Buffer) => void): void
   on?(event: 'end', listener: () => void): void
   on?(event: 'error', listener: (error: Error) => void): void
-  on?(event: string, listener: (...args: any[]) => void): void
+  on?(event: string, listener: (...args: unknown[]) => void): void
 }
 
 export interface Response {

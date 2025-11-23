@@ -12,7 +12,9 @@ interface ViteDevServer {
       port?: number
     }
   }
-  middlewares: any
+  middlewares: {
+    use: (path: string, handler: unknown) => void
+  }
 }
 
 interface Plugin {
@@ -55,7 +57,11 @@ export default function oidcPlugin(userConfig: OIDCPluginConfig = {}): Plugin {
     ...defaultConfig,
     ...userConfig,
   }
-  let middleware: any = null
+  let middleware:
+    | (((req: unknown, res: unknown, next: () => void) => Promise<void>) & {
+        cleanup?: () => void
+      })
+    | null = null
 
   return {
     name: 'vite-plugin-oidc',
@@ -94,7 +100,7 @@ export default function oidcPlugin(userConfig: OIDCPluginConfig = {}): Plugin {
       }
 
       // Create and register OIDC middleware
-      middleware = createOIDCMiddleware(config)
+      middleware = createOIDCMiddleware(config) as typeof middleware
       server.middlewares.use(config.basePath, middleware)
 
       // Store cleanup function for buildEnd hook

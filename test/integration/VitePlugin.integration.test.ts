@@ -6,7 +6,6 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import oidcPlugin from '../../src/index.js'
-import { createOIDCMiddleware } from '../../src/middleware/index.js'
 import { getTestConfig } from '../helpers/TestConfig.js'
 import { PKCETestHelper } from '../helpers/PKCETestHelper'
 import type { OIDCPluginConfig } from '../../src/types/index.js'
@@ -28,7 +27,7 @@ interface MockRequest {
   method?: string
   url?: string
   headers: Record<string, string | string[] | undefined>
-  body?: any
+  body?: unknown
   query?: Record<string, string>
 }
 
@@ -42,9 +41,9 @@ interface MockResponse {
 describe('Vite Plugin OIDC Integration Tests', () => {
   let mockServer: MockViteServer
   let mockResponse: MockResponse
-  let consoleSpy: any
-  let consoleErrorSpy: any
-  let consoleWarnSpy: any
+  let consoleSpy: ReturnType<typeof vi.spyOn>
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     // Set up mock server
@@ -98,7 +97,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       // Requirement 1.1: Plugin should register OIDC endpoints under configurable URI path
       const plugin = oidcPlugin()
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/oidc',
@@ -112,7 +111,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         basePath: '/custom-auth',
       })
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/custom-auth',
@@ -125,7 +124,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       mockServer.config.server.port = 8080
 
       const plugin = oidcPlugin()
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('http://localhost:8080/oidc'),
@@ -138,7 +137,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         issuer: customIssuer,
       })
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // Should not override the provided issuer
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
@@ -154,7 +153,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         },
       })
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('OIDC endpoints registered:'),
@@ -192,7 +191,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         },
       })
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(consoleSpy).not.toHaveBeenCalledWith(
         expect.stringContaining('OIDC endpoints registered:'),
@@ -211,15 +210,17 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
   describe('Complete OIDC Flow Through Vite Dev Server', () => {
     let middleware: any
-    let plugin: any
+    let plugin: ReturnType<typeof oidcPlugin>
 
     beforeEach(() => {
       plugin = oidcPlugin(getTestConfig())
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // Extract the registered middleware
-      const middlewareCall = (mockServer.middlewares.use as any).mock.calls[0]
+      const middlewareCall = (
+        mockServer.middlewares.use as ReturnType<typeof vi.fn>
+      ).mock.calls[0]
       middleware = middlewareCall[1]
     })
 
@@ -240,7 +241,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'application/json',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         const discoveryDoc = JSON.parse(responseBody)
 
         expect(discoveryDoc.issuer).toBe('http://localhost:5173/oidc')
@@ -279,7 +281,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'application/json',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         const jwksDoc = JSON.parse(responseBody)
 
         expect(jwksDoc.keys).toBeDefined()
@@ -358,7 +361,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'text/html; charset=utf-8',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(responseBody).toContain('Test Client') // Updated title
         expect(responseBody).toContain('Username')
         expect(responseBody).toContain('Password')
@@ -416,8 +420,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       it('should handle token exchange with valid authorization code', async () => {
         // First, we need to simulate getting an authorization code
         // This is a simplified test - in reality, we'd need to go through the full flow
-        const { codeVerifier, codeChallenge } =
-          PKCETestHelper.getFixedValidPKCEPair()
+        const { codeVerifier } = PKCETestHelper.getFixedValidPKCEPair()
 
         const request: MockRequest = {
           method: 'POST',
@@ -437,7 +440,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'application/json',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         const errorResponse = JSON.parse(responseBody)
         expect(errorResponse.error).toBe('invalid_grant')
       })
@@ -460,7 +464,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'application/json',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         const errorResponse = JSON.parse(responseBody)
         expect(errorResponse.error).toBe('unsupported_grant_type')
       })
@@ -483,7 +488,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'application/json',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         const errorResponse = JSON.parse(responseBody)
         expect(errorResponse.error).toBe('invalid_request')
       })
@@ -506,7 +512,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'application/json',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         const errorResponse = JSON.parse(responseBody)
         expect(errorResponse.error).toBe('invalid_token')
       })
@@ -528,7 +535,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'application/json',
         )
 
-        const responseBody = (mockResponse.end as any).mock.calls[0][0]
+        const responseBody = (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         const errorResponse = JSON.parse(responseBody)
         expect(errorResponse.error).toBe('invalid_token')
       })
@@ -578,17 +586,27 @@ describe('Vite Plugin OIDC Integration Tests', () => {
   })
 
   describe('Full Authorization Code Flow Integration', () => {
-    let middleware: any
-    let plugin: any
+    let middleware: (
+      req: MockRequest,
+      res: MockResponse,
+      next: ReturnType<typeof vi.fn>,
+    ) => Promise<void>
+    let plugin: ReturnType<typeof oidcPlugin>
 
     beforeEach(() => {
       plugin = oidcPlugin(getTestConfig())
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // Extract the registered middleware
-      const middlewareCall = (mockServer.middlewares.use as any).mock.calls[0]
-      middleware = middlewareCall[1]
+      const middlewareCall = (
+        mockServer.middlewares.use as ReturnType<typeof vi.fn>
+      ).mock.calls[0]
+      middleware = middlewareCall[1] as (
+        req: MockRequest,
+        res: MockResponse,
+        next: ReturnType<typeof vi.fn>,
+      ) => Promise<void>
     })
 
     it('should complete full OIDC flow simulation', async () => {
@@ -658,11 +676,13 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       )
 
       // Extract session cookie for next request
-      const setHeaderCalls = (loginSubmitResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (
+        loginSubmitResponse.setHeader as ReturnType<typeof vi.fn>
+      ).mock.calls
       const cookieCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Set-Cookie',
+        (call: unknown[]) => call[0] === 'Set-Cookie',
       )
-      const sessionCookie = cookieCall[1]
+      const sessionCookie = cookieCall ? cookieCall[1] : ''
 
       // Step 4: Complete authorization with session (should redirect with code)
       const authWithSessionRequest: MockRequest = {
@@ -682,12 +702,13 @@ describe('Vite Plugin OIDC Integration Tests', () => {
 
       expect(authWithSessionResponse.statusCode).toBe(302)
 
-      const authSetHeaderCalls = (authWithSessionResponse.setHeader as any).mock
-        .calls
+      const authSetHeaderCalls = (
+        authWithSessionResponse.setHeader as ReturnType<typeof vi.fn>
+      ).mock.calls
       const authLocationCall = authSetHeaderCalls.find(
-        (call: any) => call[0] === 'Location',
+        (call: unknown[]) => call[0] === 'Location',
       )
-      const redirectUrl = authLocationCall[1]
+      const redirectUrl = authLocationCall ? authLocationCall[1] : ''
 
       expect(redirectUrl).toContain('http://localhost:3000/callback')
       expect(redirectUrl).toContain('code=')
@@ -738,7 +759,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       }
 
       const plugin = oidcPlugin(customConfig)
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/custom-oidc',
@@ -759,7 +780,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       }
 
       const plugin = oidcPlugin(partialConfig)
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/auth',
@@ -776,7 +797,7 @@ describe('Vite Plugin OIDC Integration Tests', () => {
   describe('Plugin Lifecycle Management', () => {
     it('should handle plugin cleanup on buildEnd', () => {
       const plugin = oidcPlugin()
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // Should not throw when cleanup is called
       expect(() => plugin.buildEnd!()).not.toThrow()
@@ -789,8 +810,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
       const mockServer1 = { ...mockServer, middlewares: { use: vi.fn() } }
       const mockServer2 = { ...mockServer, middlewares: { use: vi.fn() } }
 
-      plugin1.configureServer!(mockServer1 as any)
-      plugin2.configureServer!(mockServer2 as any)
+      plugin1.configureServer!(mockServer1 as never)
+      plugin2.configureServer!(mockServer2 as never)
 
       expect(mockServer1.middlewares.use).toHaveBeenCalledWith(
         '/oidc1',
@@ -804,16 +825,18 @@ describe('Vite Plugin OIDC Integration Tests', () => {
   })
 
   describe('Third Party Cookies Support (Keycloak-js Compatibility)', () => {
-    let middleware: any
-    let plugin: any
+    let middleware: unknown
+    let plugin: ReturnType<typeof oidcPlugin>
 
     beforeEach(() => {
       plugin = oidcPlugin(getTestConfig())
 
-      plugin.configureServer!(mockServer as any)
+      plugin.configureServer!(mockServer as never)
 
       // Extract the registered middleware
-      const middlewareCall = (mockServer.middlewares.use as any).mock.calls[0]
+      const middlewareCall = (
+        mockServer.middlewares.use as ReturnType<typeof vi.fn>
+      ).mock.calls[0]
       middleware = middlewareCall[1]
     })
 
@@ -832,7 +855,13 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, step1Response, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, step1Response, vi.fn())
 
         expect(step1Response.statusCode).toBe(200)
         expect(step1Response.setHeader).toHaveBeenCalledWith(
@@ -848,7 +877,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'no-cache',
         )
 
-        const html = (step1Response.end as any).mock.calls[0][0] as string
+        const html = (step1Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('<!doctype html>')
         expect(html).toContain('checkStorageAccess')
         expect(html).toContain('KEYCLOAK_3P_COOKIE')
@@ -863,9 +893,10 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           basePath: '/auth',
         })
 
-        customPlugin.configureServer!(mockServer as any)
-        const customMiddleware = (mockServer.middlewares.use as any).mock
-          .calls[1][1]
+        customPlugin.configureServer!(mockServer as never)
+        const customMiddleware = (
+          mockServer.middlewares.use as ReturnType<typeof vi.fn>
+        ).mock.calls[1][1]
 
         const request: MockRequest = {
           method: 'GET',
@@ -882,7 +913,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
         }
         await customMiddleware(request, step1Response, vi.fn())
 
-        const html = (step1Response.end as any).mock.calls[0][0] as string
+        const html = (step1Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain(
           'http://localhost:5173/auth/protocol/openid-connect/3p-cookies/step2.html',
         )
@@ -903,9 +935,16 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, step1Response, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, step1Response, vi.fn())
 
-        const html = (step1Response.end as any).mock.calls[0][0] as string
+        const html = (step1Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('Max-Age=60; SameSite=None; Secure')
         expect(html).toContain('https://example.com')
       })
@@ -924,9 +963,16 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, step1Response, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, step1Response, vi.fn())
 
-        const html = (step1Response.end as any).mock.calls[0][0] as string
+        const html = (step1Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('Max-Age=60')
         expect(html).not.toContain('SameSite=None; Secure')
       })
@@ -947,7 +993,13 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, step2Response, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, step2Response, vi.fn())
 
         expect(step2Response.statusCode).toBe(200)
         expect(step2Response.setHeader).toHaveBeenCalledWith(
@@ -963,7 +1015,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'no-cache',
         )
 
-        const html = (step2Response.end as any).mock.calls[0][0] as string
+        const html = (step2Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('<!doctype html>')
         expect(html).toContain("document.cookie.includes('KEYCLOAK_3P_COOKIE')")
         expect(html).toContain('window.parent.postMessage')
@@ -983,9 +1036,16 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, step2Response, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, step2Response, vi.fn())
 
-        const html = (step2Response.end as any).mock.calls[0][0] as string
+        const html = (step2Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('KEYCLOAK_3P_COOKIE_SAMESITE=; Max-Age=0')
         expect(html).toContain('KEYCLOAK_3P_COOKIE=; Max-Age=0')
         expect(html).toContain('supported')
@@ -1008,7 +1068,13 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, iframeResponse, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, iframeResponse, vi.fn())
 
         expect(iframeResponse.statusCode).toBe(200)
         expect(iframeResponse.setHeader).toHaveBeenCalledWith(
@@ -1024,7 +1090,8 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           'no-cache',
         )
 
-        const html = (iframeResponse.end as any).mock.calls[0][0] as string
+        const html = (iframeResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('<!doctype html>')
         expect(html).toContain("window.addEventListener('message'")
         expect(html).toContain('sessionState')
@@ -1044,9 +1111,16 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, iframeResponse, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, iframeResponse, vi.fn())
 
-        const html = (iframeResponse.end as any).mock.calls[0][0] as string
+        const html = (iframeResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('originParam')
         expect(html).toContain('unchanged')
         expect(html).toContain('event.source.postMessage')
@@ -1066,9 +1140,16 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(request, iframeResponse, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(request, iframeResponse, vi.fn())
 
-        const html = (iframeResponse.end as any).mock.calls[0][0] as string
+        const html = (iframeResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(html).toContain('window.parent !== window')
         expect(html).toContain("window.parent.postMessage('ready', '*')")
       })
@@ -1090,11 +1171,18 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(step1Request, step1Response, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(step1Request, step1Response, vi.fn())
 
         expect(step1Response.statusCode).toBe(200)
 
-        const step1HTML = (step1Response.end as any).mock.calls[0][0] as string
+        const step1HTML = (step1Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(step1HTML).toContain('checkStorageAccess')
         expect(step1HTML).toContain('attemptWithTestCookie')
         expect(step1HTML).toContain(
@@ -1117,11 +1205,18 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(step2Request, step2Response, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(step2Request, step2Response, vi.fn())
 
         expect(step2Response.statusCode).toBe(200)
 
-        const step2HTML = (step2Response.end as any).mock.calls[0][0] as string
+        const step2HTML = (step2Response.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string
         expect(step2HTML).toContain(
           "document.cookie.includes('KEYCLOAK_3P_COOKIE')",
         )
@@ -1152,11 +1247,17 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(iframeRequest, iframeResponse, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(iframeRequest, iframeResponse, vi.fn())
 
         expect(iframeResponse.statusCode).toBe(200)
 
-        const iframeHTML = (iframeResponse.end as any).mock
+        const iframeHTML = (iframeResponse.end as ReturnType<typeof vi.fn>).mock
           .calls[0][0] as string
 
         // Verify the iframe contains the necessary message handling logic
@@ -1182,9 +1283,15 @@ describe('Vite Plugin OIDC Integration Tests', () => {
           setHeader: vi.fn(),
           end: vi.fn(),
         }
-        await middleware(iframeRequest, iframeResponse, vi.fn())
+        await (
+          middleware as (
+            req: MockRequest,
+            res: MockResponse,
+            next: ReturnType<typeof vi.fn>,
+          ) => Promise<void>
+        )(iframeRequest, iframeResponse, vi.fn())
 
-        const iframeHTML = (iframeResponse.end as any).mock
+        const iframeHTML = (iframeResponse.end as ReturnType<typeof vi.fn>).mock
           .calls[0][0] as string
 
         // Verify that the iframe responds to session state checks

@@ -8,11 +8,7 @@ import type { InMemoryStore } from '../types/storage.js'
 import type { OIDCPluginConfig } from '../types/config.js'
 import { Logger } from '../utils/Logger.js'
 
-export interface LogoutHandler {
-  handleLogout(req: Request, res: Response): Promise<void>
-}
-
-export class LogoutHandler implements LogoutHandler {
+export class LogoutHandler {
   private store: InMemoryStore
   private config: OIDCPluginConfig
   private logger: Logger
@@ -41,7 +37,6 @@ export class LogoutHandler implements LogoutHandler {
         'post_logout_redirect_uri',
       )
       const state = url.searchParams.get('state')
-      const idTokenHint = url.searchParams.get('id_token_hint')
 
       // Get session from cookie
       const sessionId = this.getSessionFromCookie(req)

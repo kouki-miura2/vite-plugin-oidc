@@ -78,7 +78,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
       }
 
       // Check if this is a silent SSO check (from iframe)
-      const isSilentCheck = this.isSilentSSOCheck(req, params)
+      const isSilentCheck = this.isSilentSSOCheck(req)
       console.log('Authorization - Is silent SSO check:', isSilentCheck)
 
       // Check if user is already authenticated (has session)
@@ -247,7 +247,7 @@ export class AuthorizationHandler implements IAuthorizationHandler {
     return cookies
   }
 
-  private isSilentSSOCheck(req: Request, params: AuthorizationParams): boolean {
+  private isSilentSSOCheck(req: Request): boolean {
     // Check for prompt=none parameter (standard OIDC silent authentication)
     const url = new URL(req.url || '', 'http://localhost')
     const prompt = url.searchParams.get('prompt')

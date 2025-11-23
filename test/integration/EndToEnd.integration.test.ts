@@ -26,7 +26,7 @@ interface MockRequest {
   method?: string
   url?: string
   headers: Record<string, string | string[] | undefined>
-  body?: any
+  body?: unknown
   query?: Record<string, string>
 }
 
@@ -39,9 +39,13 @@ interface MockResponse {
 
 describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () => {
   let mockServer: MockViteServer
-  let middleware: any
-  let plugin: any
-  let consoleSpy: any
+  let middleware: (
+    req: MockRequest,
+    res: MockResponse,
+    next: (...args: any[]) => void,
+  ) => Promise<void> | void
+  let plugin: ReturnType<typeof oidcPlugin>
+  let consoleSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     // Set up mock server
@@ -64,10 +68,12 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
     // Initialize plugin with test configuration
     plugin = oidcPlugin(getTestConfig())
 
-    plugin.configureServer!(mockServer as any)
+    plugin.configureServer!(mockServer as never)
 
     // Extract the registered middleware
-    const middlewareCall = (mockServer.middlewares.use as any).mock.calls[0]
+    const middlewareCall = (
+      mockServer.middlewares.use as ReturnType<typeof vi.fn>
+    ).mock.calls[0]
     middleware = middlewareCall[1]
   })
 
@@ -107,12 +113,13 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
 
     // Extract response data from mock calls
     const responseHeaders: Record<string, string> = {}
-    const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
-    for (const [name, value] of setHeaderCalls) {
+    const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>)
+      .mock.calls
+    for (const [name, value] of setHeaderCalls as [string, string][]) {
       responseHeaders[name] = value
     }
 
-    const endCalls = (mockResponse.end as any).mock.calls
+    const endCalls = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls
     const responseBody = endCalls.length > 0 ? endCalls[0][0] || '' : ''
 
     return {
@@ -174,8 +181,7 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
     it('should complete authorization flow steps individually', async () => {
       // Requirements: 4.1, 4.2, 4.3, 4.4 - Complete Authorization Code Flow + PKCE
 
-      const { codeVerifier, codeChallenge } =
-        PKCETestHelper.generateValidPKCEPair()
+      const { codeChallenge } = PKCETestHelper.generateValidPKCEPair()
       const clientId = 'test_client'
       const redirectUri = 'http://localhost:3000/callback'
       const state = 'test_state_' + Math.random().toString(36).substring(7)
@@ -235,7 +241,6 @@ describe('End-to-End OIDC Authorization Code Flow + PKCE Integration Tests', () 
       // Requirement 4.3, 4.4 - Token endpoint validation
 
       const { codeVerifier } = PKCETestHelper.generateValidPKCEPair()
-      const invalidCodeVerifier = PKCETestHelper.getInvalidCodeVerifier()
       const clientId = 'test_client'
       const redirectUri = 'http://localhost:3000/callback'
 

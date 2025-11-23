@@ -2,7 +2,7 @@
  * Tests for InMemoryStore class
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { InMemoryStore } from '../../../src/storage/InMemoryStore.js'
 import type {
   AuthorizationCode,

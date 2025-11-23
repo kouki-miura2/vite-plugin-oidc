@@ -125,7 +125,7 @@ export class TokenService {
    */
   validateAccessToken(token: string): {
     valid: boolean
-    payload?: any
+    payload?: unknown
     error?: string
   } {
     const result = this.jwtUtil.validateToken(token)
@@ -159,7 +159,7 @@ export class TokenService {
   validateIDToken(
     token: string,
     expectedClientId?: string,
-  ): { valid: boolean; payload?: any; error?: string } {
+  ): { valid: boolean; payload?: unknown; error?: string } {
     const result = this.jwtUtil.validateToken(token)
 
     if (!result.valid || !result.payload) {
@@ -191,12 +191,12 @@ export class TokenService {
   private buildIDTokenClaims(
     userProfile?: UserProfile,
     scope?: string,
-  ): Record<string, any> {
+  ): Record<string, unknown> {
     if (!userProfile) {
       return {}
     }
 
-    const claims: Record<string, any> = {}
+    const claims: Record<string, unknown> = {}
     const scopes = scope ? scope.split(' ') : []
     const isKeycloakMode = this.basePath && this.basePath.includes('/realms')
 

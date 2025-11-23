@@ -110,7 +110,7 @@ export class TokenHandler implements ITokenHandler {
         res.setHeader('Pragma', 'no-cache')
         res.end(JSON.stringify(tokenResponse))
         return
-      } catch (error) {
+      } catch {
         const oidcError = ValidationUtil.createErrorResponse(
           'invalid_grant',
           'Invalid authorization code or code verifier',

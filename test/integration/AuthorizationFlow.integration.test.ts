@@ -120,9 +120,9 @@ describe('Authorization Flow Integration Tests', () => {
       )
 
       // Verify the return_to parameter contains the original authorization URL
-      const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location',
+        (call: unknown[]) => call[0] === 'Location',
       )
       expect(locationCall[1]).toContain(encodeURIComponent('/oidc/authorize'))
     })
@@ -182,9 +182,9 @@ describe('Authorization Flow Integration Tests', () => {
       )
 
       // Verify session was created
-      const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>).mock.calls
       const cookieCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Set-Cookie',
+        (call: unknown[]) => call[0] === 'Set-Cookie',
       )
       const sessionCookie = cookieCall[1]
       const sessionId = sessionCookie.match(/oidc_session=([^;]+)/)?.[1]
@@ -252,9 +252,9 @@ describe('Authorization Flow Integration Tests', () => {
       // Should redirect to client with authorization code
       expect(mockResponse.statusCode).toBe(302)
 
-      const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location',
+        (call: unknown[]) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
 
@@ -289,9 +289,9 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
 
       // Verify authorization code includes correct scope
-      const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location',
+        (call: unknown[]) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
       const url = new URL(redirectUrl)
@@ -316,9 +316,9 @@ describe('Authorization Flow Integration Tests', () => {
       expect(mockResponse.statusCode).toBe(302)
 
       // Verify authorization code includes nonce
-      const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location',
+        (call: unknown[]) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
       const url = new URL(redirectUrl)
@@ -502,9 +502,9 @@ describe('Authorization Flow Integration Tests', () => {
       // Should create session for admin user
       expect(mockResponse.statusCode).toBe(302)
 
-      const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>).mock.calls
       const cookieCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Set-Cookie',
+        (call: unknown[]) => call[0] === 'Set-Cookie',
       )
       const sessionCookie = cookieCall[1]
       const sessionId = sessionCookie.match(/oidc_session=([^;]+)/)?.[1]
@@ -575,9 +575,9 @@ describe('Authorization Flow Integration Tests', () => {
       const afterTime = Date.now()
 
       // Extract authorization code from redirect
-      const setHeaderCalls = (mockResponse.setHeader as any).mock.calls
+      const setHeaderCalls = (mockResponse.setHeader as ReturnType<typeof vi.fn>).mock.calls
       const locationCall = setHeaderCalls.find(
-        (call: any) => call[0] === 'Location',
+        (call: unknown[]) => call[0] === 'Location',
       )
       const redirectUrl = locationCall[1]
       const url = new URL(redirectUrl)

@@ -59,7 +59,7 @@ describe('ThirdPartyCookiesHandler', () => {
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
       expect(mockResponse.end).toHaveBeenCalled()
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('<!doctype html>')
       expect(html).toContain('checkStorageAccess')
     })
@@ -67,7 +67,7 @@ describe('ThirdPartyCookiesHandler', () => {
     it('should generate correct step2 URL with basePath', async () => {
       await handler.handleStep1(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain(
         'http://localhost:5173/oidc/protocol/openid-connect/3p-cookies/step2.html',
       )
@@ -82,7 +82,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       await customHandler.handleStep1(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain(
         'http://localhost:5173/auth/protocol/openid-connect/3p-cookies/step2.html',
       )
@@ -97,7 +97,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       await rootHandler.handleStep1(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain(
         'http://localhost:5173/protocol/openid-connect/3p-cookies/step2.html',
       )
@@ -114,14 +114,14 @@ describe('ThirdPartyCookiesHandler', () => {
 
       await handler.handleStep1(httpsRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('Max-Age=60; SameSite=None; Secure')
     })
 
     it('should set non-secure cookie attributes for HTTP', async () => {
       await handler.handleStep1(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('Max-Age=60')
       expect(html).not.toContain('SameSite=None; Secure')
     })
@@ -137,14 +137,14 @@ describe('ThirdPartyCookiesHandler', () => {
 
       await handler.handleStep1(forwardedRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('https://localhost:5173')
     })
 
     it('should use HTTP for localhost by default', async () => {
       await handler.handleStep1(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('http://localhost:5173')
     })
 
@@ -174,7 +174,7 @@ describe('ThirdPartyCookiesHandler', () => {
       // Mock setHeader to throw an error only on first call (before the catch block)
       let callCount = 0
       const originalSetHeader = mockResponse.setHeader
-      mockResponse.setHeader = vi.fn().mockImplementation((key, value) => {
+      mockResponse.setHeader = vi.fn().mockImplementation(() => {
         callCount++
         if (callCount === 1) {
           throw new Error('Test error')
@@ -211,7 +211,7 @@ describe('ThirdPartyCookiesHandler', () => {
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
       expect(mockResponse.end).toHaveBeenCalled()
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('<!doctype html>')
       expect(html).toContain('KEYCLOAK_3P_COOKIE')
     })
@@ -219,14 +219,14 @@ describe('ThirdPartyCookiesHandler', () => {
     it('should check for test cookies in step2', async () => {
       await handler.handleStep2(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain("document.cookie.includes('KEYCLOAK_3P_COOKIE')")
     })
 
     it('should send postMessage to parent window', async () => {
       await handler.handleStep2(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('window.parent.postMessage')
       expect(html).toContain('supported')
       expect(html).toContain('unsupported')
@@ -254,7 +254,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       let callCount = 0
       const originalSetHeader = mockResponse.setHeader
-      mockResponse.setHeader = vi.fn().mockImplementation((key, value) => {
+      mockResponse.setHeader = vi.fn().mockImplementation(() => {
         callCount++
         if (callCount === 1) {
           throw new Error('Test error')
@@ -290,7 +290,7 @@ describe('ThirdPartyCookiesHandler', () => {
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
       expect(mockResponse.end).toHaveBeenCalled()
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('<!doctype html>')
       expect(html).toContain('window.addEventListener')
     })
@@ -298,7 +298,7 @@ describe('ThirdPartyCookiesHandler', () => {
     it('should handle message events for session checking', async () => {
       await handler.handleLoginStatusIframe(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain("window.addEventListener('message'")
       expect(html).toContain('sessionState')
       expect(html).toContain('unchanged')
@@ -307,7 +307,7 @@ describe('ThirdPartyCookiesHandler', () => {
     it('should notify parent when ready', async () => {
       await handler.handleLoginStatusIframe(mockRequest, mockResponse)
 
-      const html = (mockResponse.end as any).mock.calls[0][0] as string
+      const html = (mockResponse.end as ReturnType<typeof vi.fn>).mock.calls[0][0] as string
       expect(html).toContain('window.parent !== window')
       expect(html).toContain("postMessage('ready'")
     })
@@ -334,7 +334,7 @@ describe('ThirdPartyCookiesHandler', () => {
 
       let callCount = 0
       const originalSetHeader = mockResponse.setHeader
-      mockResponse.setHeader = vi.fn().mockImplementation((key, value) => {
+      mockResponse.setHeader = vi.fn().mockImplementation(() => {
         callCount++
         if (callCount === 1) {
           throw new Error('Test error')
@@ -364,7 +364,7 @@ describe('ThirdPartyCookiesHandler', () => {
       }
       const defaultHandler = new ThirdPartyCookiesHandler(configWithoutBasePath)
 
-      expect((defaultHandler as any).basePath).toBe('/oidc')
+      expect(defaultHandler['basePath']).toBe('/oidc')
     })
 
     it('should use custom basePath from config', () => {
@@ -374,7 +374,7 @@ describe('ThirdPartyCookiesHandler', () => {
       }
       const customHandler = new ThirdPartyCookiesHandler(customConfig)
 
-      expect((customHandler as any).basePath).toBe('/custom-auth')
+      expect(customHandler['basePath']).toBe('/custom-auth')
     })
   })
 })

@@ -55,7 +55,11 @@ describe('TokenHandler', () => {
 
   beforeEach(() => {
     store = new InMemoryStore()
-    const tokenExpiration: any = {} // provide defaults for tests
+    const tokenExpiration: {
+      authorizationCode?: number
+      accessToken?: number
+      idToken?: number
+    } = {} // provide defaults for tests
     const basePath = '/oidc'
     tokenService = new TokenService(
       jwtConfig,
@@ -359,7 +363,6 @@ describe('TokenHandler', () => {
     })
 
     it('should fail PKCE validation with wrong code verifier', () => {
-      const correctCodeVerifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
       const correctCodeChallenge = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM'
       const wrongCodeVerifier = 'wrong_code_verifier_that_wont_match_challenge'
 
@@ -536,7 +539,8 @@ describe('TokenHandler', () => {
       expect(mockResponse.setHeader).toHaveBeenCalledWith('Pragma', 'no-cache')
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.access_token).toBeDefined()
       expect(responseBody.token_type).toBe('Bearer')
@@ -560,7 +564,8 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.error).toBe('invalid_grant')
       expect(responseBody.error_description).toContain(
@@ -598,7 +603,8 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.error).toBe('invalid_grant')
       expect(responseBody.error_description).toContain(
@@ -622,7 +628,8 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.error).toBe('invalid_client')
     })
@@ -643,7 +650,8 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.error).toBe('unsupported_grant_type')
     })
@@ -664,7 +672,8 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.error).toBe('invalid_request')
     })
@@ -685,7 +694,8 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.error).toBe('invalid_request')
       expect(responseBody.error_description).toContain('redirect_uri')
@@ -693,8 +703,12 @@ describe('TokenHandler', () => {
 
     it('should handle server errors gracefully', async () => {
       // Mock the parseFormBody method to throw an error
-      const originalParseFormBody = (tokenHandler as any).parseFormBody
-      ;(tokenHandler as any).parseFormBody = vi.fn().mockImplementation(() => {
+      const originalParseFormBody = (
+        tokenHandler as unknown as { parseFormBody: unknown }
+      ).parseFormBody
+      ;(
+        tokenHandler as unknown as { parseFormBody: ReturnType<typeof vi.fn> }
+      ).parseFormBody = vi.fn().mockImplementation(() => {
         throw new Error('Parsing error')
       })
 
@@ -713,12 +727,14 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.error).toBe('server_error')
 
       // Restore the original method
-      ;(tokenHandler as any).parseFormBody = originalParseFormBody
+      ;(tokenHandler as unknown as { parseFormBody: unknown }).parseFormBody =
+        originalParseFormBody
     })
 
     it('should handle object-based request body', async () => {
@@ -756,7 +772,8 @@ describe('TokenHandler', () => {
       )
 
       const responseBody = JSON.parse(
-        (mockResponse.end as any).mock.calls[0][0],
+        (mockResponse.end as ReturnType<typeof vi.fn>).mock
+          .calls[0][0] as string,
       )
       expect(responseBody.access_token).toBeDefined()
       expect(responseBody.token_type).toBe('Bearer')

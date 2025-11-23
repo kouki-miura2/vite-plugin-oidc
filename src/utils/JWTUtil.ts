@@ -105,10 +105,10 @@ export class JWTUtil {
       email_verified?: boolean
       picture?: string
       locale?: string
-      [key: string]: any
+      [key: string]: unknown
     }
   }): string {
-    const additionalClaims: Record<string, any> = {}
+    const additionalClaims: Record<string, unknown> = {}
 
     // Add nonce if provided
     if (options.nonce) {

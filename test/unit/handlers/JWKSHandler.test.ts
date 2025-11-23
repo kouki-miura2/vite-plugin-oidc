@@ -79,7 +79,7 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
 
       // Mock the crypto operations since we're testing with a real key
       const mockExtractComponents = vi
-        .spyOn(rsaHandler as any, 'extractRSAPublicKeyComponents')
+        .spyOn(rsaHandler as unknown as { extractRSAPublicKeyComponents: () => { n: string; e: string } }, 'extractRSAPublicKeyComponents')
         .mockReturnValue({
           n: 'mock-n-value',
           e: 'AQAB',
@@ -243,7 +243,7 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
   describe('base64UrlEncode', () => {
     it('should encode buffer to base64url format', () => {
       const buffer = Buffer.from('test-string', 'utf8')
-      const encoded = (handler as any).base64UrlEncode(buffer)
+      const encoded = (handler as unknown as { base64UrlEncode: (buffer: Buffer) => string }).base64UrlEncode(buffer)
 
       // Base64URL should not contain +, /, or = characters
       expect(encoded).not.toMatch(/[+/=]/)
@@ -253,14 +253,14 @@ mgTOAiB6xz9KluD9MjOQKu8dHnU/b3p8ZjmqDOuKHtcKNe1jS2aqr2jidAn51QIDAQAB
 
   describe('generateKeyId', () => {
     it('should generate consistent key ID format', () => {
-      const keyId = (handler as any).generateKeyId('HS256')
+      const keyId = (handler as unknown as { generateKeyId: (algorithm: string) => string }).generateKeyId('HS256')
 
       expect(keyId).toMatch(/^hs256-[a-f0-9]{8}$/)
     })
 
     it('should generate different key IDs for different algorithms', () => {
-      const hs256Id = (handler as any).generateKeyId('HS256')
-      const rs256Id = (handler as any).generateKeyId('RS256')
+      const hs256Id = (handler as unknown as { generateKeyId: (algorithm: string) => string }).generateKeyId('HS256')
+      const rs256Id = (handler as unknown as { generateKeyId: (algorithm: string) => string }).generateKeyId('RS256')
 
       expect(hs256Id).toMatch(/^hs256-/)
       expect(rs256Id).toMatch(/^rs256-/)

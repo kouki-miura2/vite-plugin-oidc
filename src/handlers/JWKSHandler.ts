@@ -115,7 +115,11 @@ export class JWKSHandler implements IJWKSHandler {
       const keyObject = crypto.createPublicKey(publicKeyPem)
 
       // Export as JWK to get n and e components
-      const jwk = keyObject.export({ format: 'jwk' }) as any
+      const jwk = keyObject.export({ format: 'jwk' }) as unknown as {
+        kty: string
+        n?: string
+        e?: string
+      }
 
       if (jwk.kty !== 'RSA' || !jwk.n || !jwk.e) {
         throw new Error('Invalid RSA public key format')
