@@ -26,7 +26,7 @@ Thank you for your interest in contributing to vite-plugin-oidc! We welcome cont
 ### Prerequisites
 
 - Node.js (version 18 or higher recommended)
-- npm or pnpm
+- pnpm
 
 ### Installation
 
@@ -36,22 +36,22 @@ git clone https://github.com/YOUR_USERNAME/vite-plugin-oidc.git
 cd vite-plugin-oidc
 
 # Install dependencies
-npm install
+pnpm i
 
 # Build the project
-npm run build
+pnpm build
 
 # Run tests
-npm test
+pnpm test
 ```
 
 ### Available Scripts
 
-- `npm run build` - Build the project (TypeScript compilation + copy assets)
-- `npm run dev` - Watch mode for development (TypeScript compilation)
-- `npm test` - Run tests once
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Run tests with coverage report
+- `pnpm build` - Build the project (TypeScript compilation + copy assets)
+- `pnpm dev` - Watch mode for development (TypeScript compilation)
+- `pnpm test` - Run tests once
+- `pnpm test:watch` - Run tests in watch mode
+- `pnpm test:coverage` - Run tests with coverage report
 
 ## TypeScript Coding Style
 
@@ -170,13 +170,13 @@ vite-plugin-oidc/
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Run tests in watch mode
-npm run test:watch
+pnpm test:watch
 
 # Run tests with coverage
-npm run test:coverage
+pnpm test:coverage
 ```
 
 ### Writing Tests
@@ -193,8 +193,8 @@ The `examples/basic/` directory contains a working example of an OIDC client tha
 
 ```bash
 cd examples/basic
-npm install
-npm run dev
+pnpm i
+pnpm dev
 ```
 
 ## Submitting Changes
@@ -212,8 +212,8 @@ npm run dev
 3. **Test your changes**:
 
    ```bash
-   npm test
-   npm run build
+   pnpm test
+   pnpm build
    ```
 
 4. **Format your code** with Prettier:
@@ -222,10 +222,10 @@ npm run dev
    pnpm exec prettier . --write
    ```
 
-5. **Commit your changes** with a clear commit message:
+5. **Commit your changes** (with a clear commit message):
 
    ```bash
-   git commit -m "Add feature: description of your changes"
+   git commit -m "feat: description of your changes"
    ```
 
 6. **Push to your fork**:
@@ -239,7 +239,7 @@ npm run dev
 ### Commit Message Guidelines
 
 - Use clear and descriptive commit messages
-- Start with a verb in present tense (e.g., "Add", "Fix", "Update", "Remove")
+- Start with a verb in present tense (https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716)
 - Keep the first line under 72 characters
 - Add detailed description in the body if necessary
 
