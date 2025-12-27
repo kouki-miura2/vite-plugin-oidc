@@ -57,10 +57,6 @@ graph LR
 
 ```bash
 npm i -D vite-plugin-oidc
-
-# or
-
-pnpm add -D vite-plugin-oidc
 ```
 
 ## Quick Start
